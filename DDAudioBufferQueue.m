@@ -17,8 +17,6 @@
     if (self == nil)
         return nil;
     
-    NSString * identifierString = [NSString stringWithFormat:@"%@-%p", [self class], self];
-    _identifier = [[identifierString dataUsingEncoding:NSUTF8StringEncoding] retain];
     _data = [[NSMutableData alloc] initWithLength:capacity];
     _capacity = capacity;
     _bytes = [_data mutableBytes];
@@ -30,7 +28,6 @@
 - (void) dealloc
 {
     [_data release];
-    [_identifier release];
     [super dealloc];
 }
 
@@ -52,11 +49,6 @@
 - (void)setLength:(NSUInteger)length;
 {
     _length = length;
-}
-
-- (NSData *)identifier;
-{
-    return _identifier;
 }
 
 const void * DDAudioBufferBytes(DDAudioBuffer * buffer)
@@ -170,7 +162,6 @@ static void MyRenderer(void * context, void * outputData)
 {
     DDAudioBuffer * buffer = [[(DDAudioBuffer *)[DDAudioBuffer alloc] initWithCapacity:size] autorelease];
     [_buffers addObject:buffer];
-    [_buffersByIdentifier setObject:buffer forKey:[buffer identifier]];
     return buffer;
 }
 

@@ -25,7 +25,6 @@
     NSUInteger _capacity;
     void * _bytes;
     NSUInteger _length;
-    NSData * _identifier;
 }
 
 @property (nonatomic, readonly) NSUInteger capacity;
@@ -33,8 +32,6 @@
 @property (nonatomic, readwrite) NSUInteger length;
 
 - (id)initWithCapacity:(NSUInteger)capacity;
-
-- (NSData *)identifier;
 
 const void * DDAudioBufferBytes(DDAudioBuffer * buffer);
 NSUInteger DDAudioBufferLength(DDAudioBuffer * buffer);
