@@ -20,18 +20,9 @@
     NSString * identifierString = [NSString stringWithFormat:@"%@-%p", [self class], self];
     _identifier = [[identifierString dataUsingEncoding:NSUTF8StringEncoding] retain];
     _data = [[NSMutableData alloc] initWithLength:capacity];
-    
-    _audioDataBytesCapacity = capacity;
-    _audioData = [_data mutableBytes];
-    _audioDataByteSize = capacity;
-    _userData = NULL;
-    
-    DDAudioReadBuffer readBuffer = {
-        .audioDataCapacity = capacity,
-        .audioData = [_data bytes],
-        .userData = NULL,
-    };
-    memcpy(&_readBuffer, &readBuffer, sizeof(DDAudioReadBuffer));
+    _capacity = capacity;
+    _bytes = [_data mutableBytes];
+    _length = 0;
     
     return self;
 }
@@ -43,29 +34,39 @@
     [super dealloc];
 }
 
+- (NSUInteger)capacity;
+{
+    return _capacity;
+}
+
+- (void *)bytes;
+{
+    return _bytes;
+}
+
+- (NSUInteger)length;
+{
+    return _length;
+}
+
+- (void)setLength:(NSUInteger)length;
+{
+    _length = length;
+}
+
 - (NSData *)identifier;
 {
     return _identifier;
 }
 
-- (NSMutableData *)data;
+const void * DDAudioBufferBytes(DDAudioBuffer * buffer)
 {
-    return _data;
+    return buffer->_bytes;
 }
 
-void DDAudioBufferGetReadBuffer(DDAudioBuffer * buffer, DDAudioReadBuffer * readBuffer)
+NSUInteger DDAudioBufferLength(DDAudioBuffer * buffer)
 {
-    DDAudioReadBuffer readBufferCopy = {
-        .audioDataCapacity = buffer->_audioDataBytesCapacity,
-        .audioData = buffer->_audioData,
-        .userData = NULL,
-    };
-    memcpy(readBuffer, &readBufferCopy, sizeof(DDAudioReadBuffer));
-}
-
-static void DDAudioBufferProcess(DDAudioBuffer * buffer)
-{
-    NSLog(@"Processing buffer: %@ %@", buffer, [buffer data]);
+    return buffer->_length;
 }
 
 @end
@@ -79,17 +80,19 @@ static void DDAudioBufferProcess(DDAudioBuffer * buffer)
         return nil;
     
     _delegate = delegate;
-    _buffers = [[NSMutableDictionary alloc] init];
+    _buffers = [[NSMutableArray alloc] init];
+    _buffersByIdentifier = [[NSMutableDictionary alloc] init];
     
     return self;
 }
 
-- (void)bufferWithIdentifierIsAvailable:(NSData *)identifier
+- (void)sendAvaialableBuffersToDelegate;
 {
     DDAudioBuffer * buffer = NULL;
     do {
         buffer = RAAtomicListPop(&_availableList);
         if (buffer != NULL) {
+            buffer.length = 0;
             [self->_delegate audioQueue:self bufferIsAvailable:buffer];
         }
     } while (buffer != NULL);
@@ -98,7 +101,7 @@ static void DDAudioBufferProcess(DDAudioBuffer * buffer)
 static void MyPerformCallback(void * info)
 {
     DDAudioBufferQueue * self = info;
-    [self bufferWithIdentifierIsAvailable:nil];
+    [self sendAvaialableBuffersToDelegate];
 }
 
 - (BOOL)start:(NSError **)error;
@@ -119,10 +122,9 @@ static DDAudioBuffer * __activeBuffer;
 
 static void processActiveBuffer(DDAudioBufferQueue * queue)
 {
-    DDAudioReadBuffer readBuffer;
-    DDAudioBufferGetReadBuffer(__activeBuffer, &readBuffer);
-    NSLog(@"Processing %u data at %p 0x%02x", readBuffer.audioDataCapacity, readBuffer.audioData,
-          *(uint8_t*)readBuffer.audioData);
+    const void * bytes = DDAudioBufferBytes(__activeBuffer);
+    NSUInteger length = DDAudioBufferLength(__activeBuffer);
+    NSLog(@"Processing %u data at %p <0x%08X>", length, bytes, *(uint32_t*)bytes);
 }
 
 static void MyRenderer(void * context, void * outputData)
@@ -167,13 +169,14 @@ static void MyRenderer(void * context, void * outputData)
 - (DDAudioBuffer *)allocateBufferWithSize:(NSUInteger)size error:(NSError **)error;
 {
     DDAudioBuffer * buffer = [[(DDAudioBuffer *)[DDAudioBuffer alloc] initWithCapacity:size] autorelease];
-    [_buffers setObject:buffer forKey:[buffer identifier]];
+    [_buffers addObject:buffer];
+    [_buffersByIdentifier setObject:buffer forKey:[buffer identifier]];
     return buffer;
 }
 
 - (BOOL)enqueueBuffer:(DDAudioBuffer *)buffer;
 {
-    NSLog(@"enqueueBuffer: %@ %p %@", buffer, [[buffer data] mutableBytes], [buffer data]);
+    NSLog(@"enqueueBuffer: %@ %p <0x%08X>", buffer, buffer.bytes, *(uint32_t *)buffer.bytes);
     RAAtomicListInsert(&_bufferList, buffer);
     return YES;
 }

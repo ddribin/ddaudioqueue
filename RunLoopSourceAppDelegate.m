@@ -70,7 +70,8 @@ static CFDataRef MyCallBack (CFMessagePortRef local,
     
     for (int i = 0; i < 3; i++) {
         DDAudioBuffer * buffer = [_audioQueue allocateBufferWithSize:4 error:NULL];
-        memset([[buffer data] mutableBytes], _counter, 4);
+        memset(buffer.bytes, _counter, buffer.capacity);
+        buffer.length = buffer.capacity;
         [_audioQueue enqueueBuffer:buffer];
         _counter++;
     }
@@ -78,8 +79,9 @@ static CFDataRef MyCallBack (CFMessagePortRef local,
 
 - (void)audioQueue:(DDAudioBufferQueue *)queue bufferIsAvailable:(DDAudioBuffer *)buffer;
 {
-    NSLog(@"bufferIsAvailable: %@ %p %@", buffer, [[buffer data] mutableBytes], [buffer data]);
-    memset([[buffer data] mutableBytes], _counter, 4);
+    NSLog(@"bufferIsAvailable: %@ %p <0x%08x>", buffer, buffer.bytes, *(uint32_t *)buffer.bytes);
+    memset(buffer.bytes, _counter, buffer.capacity);
+    buffer.length = buffer.capacity;
     [_audioQueue enqueueBuffer:buffer];
     _counter++;
 }

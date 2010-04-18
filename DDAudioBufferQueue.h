@@ -18,32 +18,26 @@
 
 @end
 
-typedef struct DDAudioReadBuffer
-{
-    const NSUInteger audioDataCapacity;
-    const void * const audioData;
-    void * const userData;
-} DDAudioReadBuffer;
-
 @interface DDAudioBuffer : NSObject
 {
     @private
     NSMutableData * _data;
+    NSUInteger _capacity;
+    void * _bytes;
+    NSUInteger _length;
     NSData * _identifier;
-    DDAudioReadBuffer _readBuffer;
-
-    // Used for read buffer
-    NSUInteger _audioDataBytesCapacity;
-    void * _audioData;
-    NSUInteger _audioDataByteSize;
-    void * _userData;
 }
 
-- (id)initWithCapacity:(NSUInteger)capacity;
-- (NSData *)identifier;
-- (NSMutableData *)data;
+@property (nonatomic, readonly) NSUInteger capacity;
+@property (nonatomic, readonly) void * bytes;
+@property (nonatomic, readwrite) NSUInteger length;
 
-void DDAudioBufferGetReadBuffer(DDAudioBuffer * buffer, DDAudioReadBuffer * readBuffer);
+- (id)initWithCapacity:(NSUInteger)capacity;
+
+- (NSData *)identifier;
+
+const void * DDAudioBufferBytes(DDAudioBuffer * buffer);
+NSUInteger DDAudioBufferLength(DDAudioBuffer * buffer);
 
 @end
 
@@ -51,7 +45,8 @@ void DDAudioBufferGetReadBuffer(DDAudioBuffer * buffer, DDAudioReadBuffer * read
 @interface DDAudioBufferQueue : NSObject
 {
     id<DDAudioQueueDelegate> _delegate;
-    NSMutableDictionary * _buffers;
+    NSMutableArray * _buffers;
+    NSMutableDictionary * _buffersByIdentifier;
     BOOL _isStarted;
     RAAtomicListRef _bufferList;
     RAAtomicListRef _renderList;
