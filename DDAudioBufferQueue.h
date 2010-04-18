@@ -43,24 +43,23 @@ NSUInteger DDAudioBufferLength(DDAudioBuffer * buffer);
 {
     id<DDAudioQueueDelegate> _delegate;
     NSMutableArray * _buffers;
-    NSMutableDictionary * _buffersByIdentifier;
     BOOL _isStarted;
     RAAtomicListRef _bufferList;
     RAAtomicListRef _renderList;
     RAAtomicListRef _availableList;
-    CFRunLoopSourceRef _runLoopSource;
     CFRunLoopRef _runLoop;
+    CFRunLoopSourceRef _runLoopSource;
 }
 
 - (id)initWithDelegate:(id<DDAudioQueueDelegate>)delegate;
 
-- (BOOL)start:(NSError **)error;
+- (void)scheduleInRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode;
 
-- (void)stop;
+- (void)removeFromRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode;
 
 - (void)reset;
 
-- (DDAudioBuffer *)allocateBufferWithSize:(NSUInteger)size error:(NSError **)error;
+- (DDAudioBuffer *)allocateBufferWithCapacity:(NSUInteger)capacity error:(NSError **)error;
 
 - (BOOL)enqueueBuffer:(DDAudioBuffer *)buffer;
 

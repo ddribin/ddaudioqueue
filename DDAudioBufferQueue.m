@@ -73,7 +73,6 @@ NSUInteger DDAudioBufferLength(DDAudioBuffer * buffer)
     
     _delegate = delegate;
     _buffers = [[NSMutableArray alloc] init];
-    _buffersByIdentifier = [[NSMutableDictionary alloc] init];
     
     return self;
 }
@@ -96,71 +95,48 @@ static void MyPerformCallback(void * info)
     [self sendAvaialableBuffersToDelegate];
 }
 
-- (BOOL)start:(NSError **)error;
+- (void)scheduleInRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode;
 {
+    NSAssert(_runLoop == NULL, @"Already scheduled in a run loop");
+    
     CFRunLoopSourceContext sourceContext = {0};
     sourceContext.info = self;
     sourceContext.perform = MyPerformCallback;
     _runLoopSource = CFRunLoopSourceCreate(NULL, 0, &sourceContext);
-    _runLoop = CFRunLoopGetCurrent();
+    _runLoop = [runLoop getCFRunLoop];
     CFRetain(_runLoop);
-    CFRunLoopAddSource(_runLoop, _runLoopSource, kCFRunLoopCommonModes);
-    
-    [NSThread detachNewThreadSelector:@selector(threadEntry) toTarget:self withObject:nil];
-    return YES;
+    CFRunLoopAddSource(_runLoop, _runLoopSource, (CFStringRef)mode);
 }
 
-static DDAudioBuffer * __activeBuffer;
-
-static void processActiveBuffer(DDAudioBufferQueue * queue)
+- (void)removeFromRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode;
 {
-    const void * bytes = DDAudioBufferBytes(__activeBuffer);
-    NSUInteger length = DDAudioBufferLength(__activeBuffer);
-    NSLog(@"Processing %u data at %p <0x%08X>", length, bytes, *(uint32_t*)bytes);
-}
-
-static void MyRenderer(void * context, void * outputData)
-{
-    DDAudioBufferQueue * queue = (DDAudioBufferQueue *)context;
-    if (__activeBuffer != nil) {
-        processActiveBuffer(queue);
-        [__activeBuffer autorelease];
-        DDAudioQueueBufferIsAvailable(queue, __activeBuffer);
-        __activeBuffer = nil;
-    }
-    else {
-        __activeBuffer = DDAudioQueueDequeueBuffer(queue);
-        if (__activeBuffer != nil) {
-            processActiveBuffer(queue);
-        } else {
-            NSLog(@"Processing silence");
-        }
-    }
-}
-
-- (void)threadEntry
-{
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-    
-    while (YES) {
-        MyRenderer(self, NULL);
-        [NSThread sleepForTimeInterval:1.0];
+    if (_runLoop == NULL) {
+        return;
     }
     
-    [pool drain];
+    CFRunLoopSourceInvalidate(_runLoopSource);
+    CFRelease(_runLoopSource);
+    _runLoopSource = NULL;
+    CFRelease(_runLoop);
+    _runLoop = NULL;
 }
 
-- (void)stop;
+- (void)popAllFromList:(RAAtomicListRef *)list
 {
+	while (RAAtomicListPop(list)) {
+    }
 }
 
 - (void)reset;
 {
+    [self popAllFromList:&_bufferList];
+    [self popAllFromList:&_renderList];
+    [self popAllFromList:&_availableList];
 }
 
-- (DDAudioBuffer *)allocateBufferWithSize:(NSUInteger)size error:(NSError **)error;
+- (DDAudioBuffer *)allocateBufferWithCapacity:(NSUInteger)capacity error:(NSError **)error;
 {
-    DDAudioBuffer * buffer = [[(DDAudioBuffer *)[DDAudioBuffer alloc] initWithCapacity:size] autorelease];
+    DDAudioBuffer * buffer = [[(DDAudioBuffer *)[DDAudioBuffer alloc] initWithCapacity:capacity] autorelease];
     [_buffers addObject:buffer];
     return buffer;
 }
