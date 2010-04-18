@@ -63,12 +63,6 @@ void DDAudioBufferGetReadBuffer(DDAudioBuffer * buffer, DDAudioReadBuffer * read
     memcpy(readBuffer, &readBufferCopy, sizeof(DDAudioReadBuffer));
 }
 
-static void DDAudioBufferSend(DDAudioBuffer * buffer, CFMessagePortRef messagePort)
-{
-    CFMessagePortSendRequest(messagePort, 300, (CFDataRef)buffer->_identifier,
-                             1, 1, NULL, NULL);
-}
-
 static void DDAudioBufferProcess(DDAudioBuffer * buffer)
 {
     NSLog(@"Processing buffer: %@ %@", buffer, [buffer data]);
@@ -92,40 +86,31 @@ static void DDAudioBufferProcess(DDAudioBuffer * buffer)
 
 - (void)bufferWithIdentifierIsAvailable:(NSData *)identifier
 {
-    DDAudioBuffer * buffer = [_buffers objectForKey:identifier];
-    [self->_delegate audioQueue:self bufferIsAvailable:buffer];
+    DDAudioBuffer * buffer = NULL;
+    do {
+        buffer = RAAtomicListPop(&_availableList);
+        if (buffer != NULL) {
+            [self->_delegate audioQueue:self bufferIsAvailable:buffer];
+        }
+    } while (buffer != NULL);
 }
 
-static CFDataRef MyCallBack (CFMessagePortRef local,
-                             SInt32 msgid,
-                             CFDataRef data,
-                             void *info)
+static void MyPerformCallback(void * info)
 {
     DDAudioBufferQueue * self = info;
-    [self bufferWithIdentifierIsAvailable:(id)data];
-    return NULL;
+    [self bufferWithIdentifierIsAvailable:nil];
 }
 
 - (BOOL)start:(NSError **)error;
 {
-    CFMessagePortContext context = {
-        .version = 0,
-        .info = self,
-        .retain = NULL,
-        .release = NULL,
-        .copyDescription = NULL,
-    };
-    NSString * name = [NSString stringWithFormat:@"%@-%p", [self className], self];
-    _messagePort = CFMessagePortCreateLocal(NULL,
-                                            (CFStringRef)name,
-                                            MyCallBack,
-                                            &context,
-                                            NULL);
-    _messagePortSource = CFMessagePortCreateRunLoopSource(NULL,
-                                                          _messagePort,
-                                                          0);
-    CFRunLoopRef cfRunLoop = CFRunLoopGetCurrent();
-    CFRunLoopAddSource(cfRunLoop, _messagePortSource, kCFRunLoopCommonModes);
+    CFRunLoopSourceContext sourceContext = {0};
+    sourceContext.info = self;
+    sourceContext.perform = MyPerformCallback;
+    _runLoopSource = CFRunLoopSourceCreate(NULL, 0, &sourceContext);
+    _runLoop = CFRunLoopGetCurrent();
+    CFRetain(_runLoop);
+    CFRunLoopAddSource(_runLoop, _runLoopSource, kCFRunLoopCommonModes);
+    
     [NSThread detachNewThreadSelector:@selector(threadEntry) toTarget:self withObject:nil];
     return YES;
 }
@@ -175,6 +160,10 @@ static void MyRenderer(void * context, void * outputData)
 {
 }
 
+- (void)reset;
+{
+}
+
 - (DDAudioBuffer *)allocateBufferWithSize:(NSUInteger)size error:(NSError **)error;
 {
     DDAudioBuffer * buffer = [[(DDAudioBuffer *)[DDAudioBuffer alloc] initWithCapacity:size] autorelease];
@@ -202,7 +191,9 @@ DDAudioBuffer * DDAudioQueueDequeueBuffer(DDAudioBufferQueue * queue)
 
 void DDAudioQueueBufferIsAvailable(DDAudioBufferQueue * queue, DDAudioBuffer * buffer)
 {
-    DDAudioBufferSend(buffer, queue->_messagePort);
+    RAAtomicListInsert(&queue->_availableList, buffer);
+    CFRunLoopSourceSignal(queue->_runLoopSource);
+    CFRunLoopWakeUp(queue->_runLoop);
 }
 
 @end

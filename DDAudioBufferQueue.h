@@ -55,8 +55,9 @@ void DDAudioBufferGetReadBuffer(DDAudioBuffer * buffer, DDAudioReadBuffer * read
     BOOL _isStarted;
     RAAtomicListRef _bufferList;
     RAAtomicListRef _renderList;
-    CFMessagePortRef _messagePort;
-    CFRunLoopSourceRef _messagePortSource;
+    RAAtomicListRef _availableList;
+    CFRunLoopSourceRef _runLoopSource;
+    CFRunLoopRef _runLoop;
 }
 
 - (id)initWithDelegate:(id<DDAudioQueueDelegate>)delegate;
@@ -64,6 +65,8 @@ void DDAudioBufferGetReadBuffer(DDAudioBuffer * buffer, DDAudioReadBuffer * read
 - (BOOL)start:(NSError **)error;
 
 - (void)stop;
+
+- (void)reset;
 
 - (DDAudioBuffer *)allocateBufferWithSize:(NSUInteger)size error:(NSError **)error;
 
