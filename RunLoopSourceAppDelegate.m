@@ -13,55 +13,8 @@
 
 @synthesize window;
 
-static CFDataRef MyCallBack (CFMessagePortRef local,
-                      SInt32 msgid,
-                      CFDataRef data,
-                      void *info)
-{
-    NSLog(@"Received data: %@", data);
-    return NULL;
-}
-
-
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
-#if 0
-    _poker = [[DDRunLoopPoker alloc] init];
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        sleep(3);
-        [_poker pokeRunLoop];
-        sleep(3);
-    });
-#endif
-    
-#if 0
-    CFMessagePortContext context = {
-        .version = 0,
-        .info = self,
-        .retain = NULL,
-        .release = NULL,
-        .copyDescription = NULL,
-    };
-    CFMessagePortRef messagePort = CFMessagePortCreateLocal(NULL,
-                                                            (CFStringRef)@"MyName",
-                                                            MyCallBack,
-                                                            &context,
-                                                            NULL);
-    CFRunLoopSourceRef messagePortSource = CFMessagePortCreateRunLoopSource(NULL,
-                                                                            messagePort,
-                                                                            0);
-    CFRunLoopRef cfRunLoop = CFRunLoopGetCurrent();
-    CFRunLoopAddSource(cfRunLoop, messagePortSource, (CFStringRef)NSDefaultRunLoopMode);
-    CFRunLoopAddSource(cfRunLoop, messagePortSource, (CFStringRef)NSModalPanelRunLoopMode);
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        sleep(3);
-        NSData * data = [@"hello" dataUsingEncoding:NSUTF8StringEncoding];
-        CFMessagePortSendRequest(messagePort, 300, (CFDataRef)data,
-                                 1, 1, NULL, NULL);
-        sleep(3);
-    });
-#endif
-    
     _audioQueue = [[DDAudioBufferQueue alloc] initWithDelegate:self];
                
     [_audioQueue scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
