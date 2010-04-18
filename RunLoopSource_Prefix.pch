@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'RunLoopSource' target in the 'RunLoopSource' project
+//
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+#endif
