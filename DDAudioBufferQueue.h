@@ -33,10 +33,10 @@
 
 - (id)initWithCapacity:(NSUInteger)capacity;
 
+@end
+
 const void * DDAudioBufferBytes(DDAudioBuffer * buffer);
 NSUInteger DDAudioBufferLength(DDAudioBuffer * buffer);
-
-@end
 
 
 @interface DDAudioBufferQueue : NSObject
@@ -55,7 +55,7 @@ NSUInteger DDAudioBufferLength(DDAudioBuffer * buffer);
 
 - (void)scheduleInRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode;
 
-- (void)removeFromRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode;
+- (void)removeFromRunLoop;
 
 - (void)reset;
 

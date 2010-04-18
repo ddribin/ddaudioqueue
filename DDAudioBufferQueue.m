@@ -77,6 +77,14 @@ NSUInteger DDAudioBufferLength(DDAudioBuffer * buffer)
     return self;
 }
 
+- (void)dealloc
+{
+    [self removeFromRunLoop];
+    [self reset];
+    [_buffers release];
+    [super dealloc];
+}
+
 - (void)sendAvaialableBuffersToDelegate;
 {
     DDAudioBuffer * buffer = NULL;
@@ -108,7 +116,7 @@ static void MyPerformCallback(void * info)
     CFRunLoopAddSource(_runLoop, _runLoopSource, (CFStringRef)mode);
 }
 
-- (void)removeFromRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode;
+- (void)removeFromRunLoop;
 {
     if (_runLoop == NULL) {
         return;

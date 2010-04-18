@@ -70,12 +70,23 @@ static void MyRenderer(void * context, void * outputData)
 {
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
     
-    while (YES) {
+    while (_counter <= 5) {
         MyRenderer(self, NULL);
         [NSThread sleepForTimeInterval:1.0];
     }
     
+    [self performSelectorOnMainThread:@selector(threadFinished) withObject:nil waitUntilDone:NO];
+    
     [pool drain];
+}
+
+- (void)threadFinished
+{
+    NSLog(@"Thread finished");
+    [_audioQueue removeFromRunLoop];
+    [_audioQueue reset];
+    [_audioQueue release];
+    _audioQueue = nil;
 }
 
 
