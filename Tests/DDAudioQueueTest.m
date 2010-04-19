@@ -55,7 +55,14 @@ static const NSUInteger CAPACITY = 10;
     [runLoop runUntilDate:[NSDate date]];
 }
 
+- (void)dequeueAndMakeAvailable
+{
+    DDAudioQueueBuffer * buffer = DDAudioQueueDequeueBuffer(_queue);
+    DDAudioQueueBufferIsAvailable(_queue, buffer);
+}
+
 #pragma mark -
+#pragma mark Tests
 
 - (void)testAllocatedBuffersHaveCorrectInitialValues
 {
@@ -100,8 +107,7 @@ static const NSUInteger CAPACITY = 10;
 {
     DDAudioQueueBuffer * buffer = [self allocateBuffer];
     [_queue enqueueBuffer:buffer];
-    DDAudioQueueBuffer * dequeuedBuffer = DDAudioQueueDequeueBuffer(_queue);
-    DDAudioQueueBufferIsAvailable(_queue, dequeuedBuffer);
+    [self dequeueAndMakeAvailable];
     
     [self spinRunLoop];
     
@@ -115,7 +121,7 @@ static const NSUInteger CAPACITY = 10;
     // Ensure the length is not zero
     buffer.length = CAPACITY;
     [_queue enqueueBuffer:buffer];
-    DDAudioQueueBufferIsAvailable(_queue, DDAudioQueueDequeueBuffer(_queue));
+    [self dequeueAndMakeAvailable];
     
     [self spinRunLoop];
     
@@ -128,8 +134,8 @@ static const NSUInteger CAPACITY = 10;
     [self allocateBuffers:2];
     [_queue enqueueBuffer:[self buffer:0]];
     [_queue enqueueBuffer:[self buffer:1]];
-    DDAudioQueueBufferIsAvailable(_queue, DDAudioQueueDequeueBuffer(_queue));
-    DDAudioQueueBufferIsAvailable(_queue, DDAudioQueueDequeueBuffer(_queue));
+    [self dequeueAndMakeAvailable];
+    [self dequeueAndMakeAvailable];
     
     [self spinRunLoop];
     
