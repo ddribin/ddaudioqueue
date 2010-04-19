@@ -3,15 +3,8 @@
 #import <Foundation/Foundation.h>
 #import "RAAtomicList.h"
 
-@class DDAudioQueue;
+@protocol DDAudioQueueDelegate;
 @class DDAudioQueueBuffer;
-
-@protocol DDAudioQueueDelegate <NSObject>
-
-- (void)audioQueue:(DDAudioQueue *)queue bufferIsAvailable:(DDAudioQueueBuffer *)buffer;
-
-@end
-
 
 @interface DDAudioQueue : NSObject
 {

@@ -1,7 +1,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "DDAudioQueue.h"
+#import "DDAudioQueueDelegate.h"
 
 @class DDAudioQueue;
 @class DDAudioQueueBuffer;

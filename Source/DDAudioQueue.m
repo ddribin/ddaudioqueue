@@ -1,6 +1,7 @@
 //
 
 #import "DDAudioQueue.h"
+#import "DDAudioQueueDelegate.h"
 #import "DDAudioQueueBuffer.h"
 
 

@@ -74,6 +74,7 @@
 		55B2BCAA117C032600CC1D9A /* DDAudioBufferQueueTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDAudioBufferQueueTest.m; sourceTree = "<group>"; };
 		55B2BCBF117C042000CC1D9A /* DDAudioQueueBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDAudioQueueBuffer.h; sourceTree = "<group>"; };
 		55B2BCC0117C042000CC1D9A /* DDAudioQueueBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDAudioQueueBuffer.m; sourceTree = "<group>"; };
+		55B2BCF5117C05BD00CC1D9A /* DDAudioQueueDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDAudioQueueDelegate.h; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -178,6 +179,7 @@
 			children = (
 				55B2B67C117AB73000CC1D9A /* DDAudioQueue.h */,
 				55B2B67D117AB73000CC1D9A /* DDAudioQueue.m */,
+				55B2BCF5117C05BD00CC1D9A /* DDAudioQueueDelegate.h */,
 				55B2BCBF117C042000CC1D9A /* DDAudioQueueBuffer.h */,
 				55B2BCC0117C042000CC1D9A /* DDAudioQueueBuffer.m */,
 				55B2B67F117AB75100CC1D9A /* RAAtomicList.h */,
