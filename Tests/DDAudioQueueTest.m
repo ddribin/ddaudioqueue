@@ -64,7 +64,7 @@ static const NSUInteger CAPACITY = 10;
 #pragma mark -
 #pragma mark Tests
 
-- (void)testAllocatedBuffersHaveCorrectInitialValues
+- (void)testAllocatesBuffersWithCorrectInitialValues
 {
     DDAudioQueueBuffer * buffer = [self allocateBuffer];
     
@@ -74,7 +74,7 @@ static const NSUInteger CAPACITY = 10;
     STAssertNotNil(buffer.bytes, nil);
 }
 
-- (void)testEnqueuedBuffersAreDequeuedInOrder
+- (void)testDequeuesBuffersInOrderTheyAreEnqeueued
 {
     [self allocateBuffers:2];
     
@@ -85,7 +85,7 @@ static const NSUInteger CAPACITY = 10;
     STAssertEquals(DDAudioQueueDequeueBuffer(_queue), [self buffer:1], nil);
 }
 
-- (void)testNilIsDeqeuedAfterDequeueingLastBuffer
+- (void)testDequeuesNilAfterDequeueingLastBuffer
 {
     DDAudioQueueBuffer * buffer = [self allocateBuffer];
     [_queue enqueueBuffer:buffer];
@@ -96,14 +96,14 @@ static const NSUInteger CAPACITY = 10;
     STAssertNil(dequeuedBuffer, nil);
 }
 
-- (void)testNilIsDequeuedOnEmpty
+- (void)testDequeuessNilOnEmpty
 {
     DDAudioQueueBuffer * dequeuedBuffer = DDAudioQueueDequeueBuffer(_queue);
     
     STAssertNil(dequeuedBuffer, nil);
 }
 
-- (void)testDelegateIsCalledWhenBufferBecomesAvailable
+- (void)testCallsDelegateWhenBufferBecomesAvailable
 {
     DDAudioQueueBuffer * buffer = [self allocateBuffer];
     [_queue enqueueBuffer:buffer];
@@ -115,7 +115,7 @@ static const NSUInteger CAPACITY = 10;
     STAssertEquals([_availableBuffers objectAtIndex:0], buffer, nil);
 }
 
-- (void)testAvailableBufferLengthIsZero
+- (void)testResetsAvailableBufferLengthToZero
 {
     DDAudioQueueBuffer * buffer = [self allocateBuffer];
     // Ensure the length is not zero
@@ -129,7 +129,7 @@ static const NSUInteger CAPACITY = 10;
     STAssertEquals(buffer.length, (NSUInteger)0, nil);
 }
 
-- (void)testMultipleAvailableAreSentToDelegateInReverseOrder
+- (void)testSendsMultipleAvailableToDelegateInReverseOrder
 {
     [self allocateBuffers:2];
     [_queue enqueueBuffer:[self buffer:0]];
@@ -144,7 +144,7 @@ static const NSUInteger CAPACITY = 10;
     STAssertEquals([_availableBuffers objectAtIndex:1], [self buffer:0], nil);
 }
 
-- (void)testDequeingStealsBuffer
+- (void)testDequeuePopsFromInternalListsInProperOrder
 {
     [self allocateBuffers:5];
     [_queue enqueueBuffer:[self buffer:0]];
