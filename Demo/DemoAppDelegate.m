@@ -1,9 +1,9 @@
 //
 
-#import "RunLoopSourceAppDelegate.h"
+#import "DemoAppDelegate.h"
 #import "DDAudioBufferQueue.h"
 
-@implementation RunLoopSourceAppDelegate
+@implementation DemoAppDelegate
 
 @synthesize window;
 
@@ -43,7 +43,7 @@ static void processBuffer(DDAudioBuffer * buffer, DDAudioBufferQueue * queue)
 
 static void MyRenderer(void * context, void * outputData)
 {
-    RunLoopSourceAppDelegate * self = context;
+    DemoAppDelegate * self = context;
     DDAudioBufferQueue * queue = self->_audioQueue;
     if (self->_activeBuffer != nil) {
         processBuffer(self->_activeBuffer, queue);

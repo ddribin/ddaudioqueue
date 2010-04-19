@@ -6,7 +6,8 @@
 @class DDAudioBufferQueue;
 @class DDAudioBuffer;
 
-@interface RunLoopSourceAppDelegate : NSObject <NSApplicationDelegate, DDAudioQueueDelegate> {
+@interface DemoAppDelegate : NSObject <NSApplicationDelegate, DDAudioQueueDelegate>
+{
     NSWindow *window;
     DDAudioBufferQueue * _audioQueue;
     DDAudioBuffer * _activeBuffer;
