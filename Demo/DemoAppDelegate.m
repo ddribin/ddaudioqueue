@@ -2,6 +2,7 @@
 
 #import "DemoAppDelegate.h"
 #import "DDAudioBufferQueue.h"
+#import "DDAudioBuffer.h"
 
 @implementation DemoAppDelegate
 
