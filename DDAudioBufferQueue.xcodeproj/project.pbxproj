@@ -138,10 +138,10 @@
 			isa = PBXGroup;
 			children = (
 				55B2BC4C117C005C00CC1D9A /* Source */,
+				55B2BC9E117C02AB00CC1D9A /* Tests */,
 				55B2BC57117C012B00CC1D9A /* Demo */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
-				55B2BC9E117C02AB00CC1D9A /* Tests */,
 			);
 			name = RunLoopSource;
 			sourceTree = "<group>";
@@ -201,9 +201,9 @@
 		55B2BC9E117C02AB00CC1D9A /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				55B2BC99117C029A00CC1D9A /* Info.plist */,
 				55B2BCA9117C032600CC1D9A /* DDAudioBufferQueueTest.h */,
 				55B2BCAA117C032600CC1D9A /* DDAudioBufferQueueTest.m */,
+				55B2BC99117C029A00CC1D9A /* Info.plist */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
