@@ -102,6 +102,7 @@ static const NSUInteger CAPACITY = 10;
     [_queue enqueueBuffer:buffer];
     DDAudioQueueBuffer * dequeuedBuffer = DDAudioQueueDequeueBuffer(_queue);
     DDAudioQueueBufferIsAvailable(_queue, dequeuedBuffer);
+    
     [self spinRunLoop];
     
     STAssertEquals([_availableBuffers count], (NSUInteger)1, nil);
@@ -114,12 +115,27 @@ static const NSUInteger CAPACITY = 10;
     // Ensure the length is not zero
     buffer.length = CAPACITY;
     [_queue enqueueBuffer:buffer];
-    DDAudioQueueBuffer * dequeuedBuffer = DDAudioQueueDequeueBuffer(_queue);
-    DDAudioQueueBufferIsAvailable(_queue, dequeuedBuffer);
+    DDAudioQueueBufferIsAvailable(_queue, DDAudioQueueDequeueBuffer(_queue));
+    
     [self spinRunLoop];
     
     buffer = [_availableBuffers objectAtIndex:0];
     STAssertEquals(buffer.length, (NSUInteger)0, nil);
+}
+
+- (void)testMultipleAvailableAreSentToDelegateInReverseOrder
+{
+    [self allocateBuffers:2];
+    [_queue enqueueBuffer:[self buffer:0]];
+    [_queue enqueueBuffer:[self buffer:1]];
+    DDAudioQueueBufferIsAvailable(_queue, DDAudioQueueDequeueBuffer(_queue));
+    DDAudioQueueBufferIsAvailable(_queue, DDAudioQueueDequeueBuffer(_queue));
+    
+    [self spinRunLoop];
+    
+    STAssertEquals([_availableBuffers count], (NSUInteger)2, nil);
+    STAssertEquals([_availableBuffers objectAtIndex:0], [self buffer:1], nil);
+    STAssertEquals([_availableBuffers objectAtIndex:1], [self buffer:0], nil);
 }
 
 - (void)testDequeingStealsBuffer
