@@ -3,7 +3,7 @@
 #import <Foundation/Foundation.h>
 
 
-@interface DDAudioBuffer : NSObject
+@interface DDAudioQueueBuffer : NSObject
 {
 @private
     NSMutableData * _data;
@@ -20,5 +20,5 @@
 
 @end
 
-const void * DDAudioBufferBytes(DDAudioBuffer * buffer);
-NSUInteger DDAudioBufferLength(DDAudioBuffer * buffer);
+const void * DDAudioBufferBytes(DDAudioQueueBuffer * buffer);
+NSUInteger DDAudioBufferLength(DDAudioQueueBuffer * buffer);

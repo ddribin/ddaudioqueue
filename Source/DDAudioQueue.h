@@ -3,17 +3,17 @@
 #import <Foundation/Foundation.h>
 #import "RAAtomicList.h"
 
-@class DDAudioBufferQueue;
-@class DDAudioBuffer;
+@class DDAudioQueue;
+@class DDAudioQueueBuffer;
 
 @protocol DDAudioQueueDelegate <NSObject>
 
-- (void)audioQueue:(DDAudioBufferQueue *)queue bufferIsAvailable:(DDAudioBuffer *)buffer;
+- (void)audioQueue:(DDAudioQueue *)queue bufferIsAvailable:(DDAudioQueueBuffer *)buffer;
 
 @end
 
 
-@interface DDAudioBufferQueue : NSObject
+@interface DDAudioQueue : NSObject
 {
     id<DDAudioQueueDelegate> _delegate;
     NSMutableArray * _buffers;
@@ -33,12 +33,12 @@
 
 - (void)reset;
 
-- (DDAudioBuffer *)allocateBufferWithCapacity:(NSUInteger)capacity error:(NSError **)error;
+- (DDAudioQueueBuffer *)allocateBufferWithCapacity:(NSUInteger)capacity error:(NSError **)error;
 
-- (BOOL)enqueueBuffer:(DDAudioBuffer *)buffer;
+- (BOOL)enqueueBuffer:(DDAudioQueueBuffer *)buffer;
 
 @end
 
-DDAudioBuffer * DDAudioQueueDequeueBuffer(DDAudioBufferQueue * queue);
+DDAudioQueueBuffer * DDAudioQueueDequeueBuffer(DDAudioQueue * queue);
 
-void DDAudioQueueBufferIsAvailable(DDAudioBufferQueue * queue, DDAudioBuffer * buffer);
+void DDAudioQueueBufferIsAvailable(DDAudioQueue * queue, DDAudioQueueBuffer * buffer);

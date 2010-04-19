@@ -24,12 +24,12 @@
 /* Begin PBXBuildFile section */
 		1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
 		256AC3DA0F4B6AC300CF3369 /* DemoAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 256AC3D90F4B6AC300CF3369 /* DemoAppDelegate.m */; };
-		55B2B67E117AB73000CC1D9A /* DDAudioBufferQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B2B67D117AB73000CC1D9A /* DDAudioBufferQueue.m */; };
+		55B2B67E117AB73000CC1D9A /* DDAudioQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B2B67D117AB73000CC1D9A /* DDAudioQueue.m */; };
 		55B2B681117AB75100CC1D9A /* RAAtomicList.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B2B680117AB75100CC1D9A /* RAAtomicList.m */; };
 		55B2BCAC117C033100CC1D9A /* DDAudioBufferQueueTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B2BCAA117C032600CC1D9A /* DDAudioBufferQueueTest.m */; };
-		55B2BCC1117C042000CC1D9A /* DDAudioBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B2BCC0117C042000CC1D9A /* DDAudioBuffer.m */; };
-		55B2BCC8117C046D00CC1D9A /* DDAudioBufferQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B2B67D117AB73000CC1D9A /* DDAudioBufferQueue.m */; };
-		55B2BCC9117C046D00CC1D9A /* DDAudioBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B2BCC0117C042000CC1D9A /* DDAudioBuffer.m */; };
+		55B2BCC1117C042000CC1D9A /* DDAudioQueueBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B2BCC0117C042000CC1D9A /* DDAudioQueueBuffer.m */; };
+		55B2BCC8117C046D00CC1D9A /* DDAudioQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B2B67D117AB73000CC1D9A /* DDAudioQueue.m */; };
+		55B2BCC9117C046D00CC1D9A /* DDAudioQueueBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B2BCC0117C042000CC1D9A /* DDAudioQueueBuffer.m */; };
 		55B2BCCA117C046D00CC1D9A /* RAAtomicList.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B2B680117AB75100CC1D9A /* RAAtomicList.m */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -64,16 +64,16 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		55B2B67C117AB73000CC1D9A /* DDAudioBufferQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDAudioBufferQueue.h; sourceTree = "<group>"; };
-		55B2B67D117AB73000CC1D9A /* DDAudioBufferQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDAudioBufferQueue.m; sourceTree = "<group>"; };
+		55B2B67C117AB73000CC1D9A /* DDAudioQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDAudioQueue.h; sourceTree = "<group>"; };
+		55B2B67D117AB73000CC1D9A /* DDAudioQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDAudioQueue.m; sourceTree = "<group>"; };
 		55B2B67F117AB75100CC1D9A /* RAAtomicList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAAtomicList.h; sourceTree = "<group>"; };
 		55B2B680117AB75100CC1D9A /* RAAtomicList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAAtomicList.m; sourceTree = "<group>"; };
 		55B2BC98117C029A00CC1D9A /* UnitTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnitTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		55B2BC99117C029A00CC1D9A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		55B2BCA9117C032600CC1D9A /* DDAudioBufferQueueTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDAudioBufferQueueTest.h; sourceTree = "<group>"; };
 		55B2BCAA117C032600CC1D9A /* DDAudioBufferQueueTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDAudioBufferQueueTest.m; sourceTree = "<group>"; };
-		55B2BCBF117C042000CC1D9A /* DDAudioBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDAudioBuffer.h; sourceTree = "<group>"; };
-		55B2BCC0117C042000CC1D9A /* DDAudioBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDAudioBuffer.m; sourceTree = "<group>"; };
+		55B2BCBF117C042000CC1D9A /* DDAudioQueueBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDAudioQueueBuffer.h; sourceTree = "<group>"; };
+		55B2BCC0117C042000CC1D9A /* DDAudioQueueBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDAudioQueueBuffer.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -176,10 +176,10 @@
 		55B2BC4C117C005C00CC1D9A /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				55B2B67C117AB73000CC1D9A /* DDAudioBufferQueue.h */,
-				55B2B67D117AB73000CC1D9A /* DDAudioBufferQueue.m */,
-				55B2BCBF117C042000CC1D9A /* DDAudioBuffer.h */,
-				55B2BCC0117C042000CC1D9A /* DDAudioBuffer.m */,
+				55B2B67C117AB73000CC1D9A /* DDAudioQueue.h */,
+				55B2B67D117AB73000CC1D9A /* DDAudioQueue.m */,
+				55B2BCBF117C042000CC1D9A /* DDAudioQueueBuffer.h */,
+				55B2BCC0117C042000CC1D9A /* DDAudioQueueBuffer.m */,
 				55B2B67F117AB75100CC1D9A /* RAAtomicList.h */,
 				55B2B680117AB75100CC1D9A /* RAAtomicList.m */,
 			);
@@ -305,8 +305,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				55B2BCAC117C033100CC1D9A /* DDAudioBufferQueueTest.m in Sources */,
-				55B2BCC8117C046D00CC1D9A /* DDAudioBufferQueue.m in Sources */,
-				55B2BCC9117C046D00CC1D9A /* DDAudioBuffer.m in Sources */,
+				55B2BCC8117C046D00CC1D9A /* DDAudioQueue.m in Sources */,
+				55B2BCC9117C046D00CC1D9A /* DDAudioQueueBuffer.m in Sources */,
 				55B2BCCA117C046D00CC1D9A /* RAAtomicList.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -317,9 +317,9 @@
 			files = (
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				256AC3DA0F4B6AC300CF3369 /* DemoAppDelegate.m in Sources */,
-				55B2B67E117AB73000CC1D9A /* DDAudioBufferQueue.m in Sources */,
+				55B2B67E117AB73000CC1D9A /* DDAudioQueue.m in Sources */,
 				55B2B681117AB75100CC1D9A /* RAAtomicList.m in Sources */,
-				55B2BCC1117C042000CC1D9A /* DDAudioBuffer.m in Sources */,
+				55B2BCC1117C042000CC1D9A /* DDAudioQueueBuffer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

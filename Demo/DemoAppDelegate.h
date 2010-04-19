@@ -1,16 +1,16 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "DDAudioBufferQueue.h"
+#import "DDAudioQueue.h"
 
-@class DDAudioBufferQueue;
-@class DDAudioBuffer;
+@class DDAudioQueue;
+@class DDAudioQueueBuffer;
 
 @interface DemoAppDelegate : NSObject <NSApplicationDelegate, DDAudioQueueDelegate>
 {
     NSWindow *window;
-    DDAudioBufferQueue * _audioQueue;
-    DDAudioBuffer * _activeBuffer;
+    DDAudioQueue * _audioQueue;
+    DDAudioQueueBuffer * _activeBuffer;
     int _counter;
 }
 

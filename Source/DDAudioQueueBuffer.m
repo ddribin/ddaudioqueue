@@ -1,9 +1,9 @@
 //
 
-#import "DDAudioBuffer.h"
+#import "DDAudioQueueBuffer.h"
 
 
-@implementation DDAudioBuffer
+@implementation DDAudioQueueBuffer
 
 - (id)initWithCapacity:(NSUInteger)capacity;
 {
@@ -45,12 +45,12 @@
     _length = length;
 }
 
-const void * DDAudioBufferBytes(DDAudioBuffer * buffer)
+const void * DDAudioBufferBytes(DDAudioQueueBuffer * buffer)
 {
     return buffer->_bytes;
 }
 
-NSUInteger DDAudioBufferLength(DDAudioBuffer * buffer)
+NSUInteger DDAudioBufferLength(DDAudioQueueBuffer * buffer)
 {
     return buffer->_length;
 }

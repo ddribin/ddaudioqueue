@@ -1,8 +1,8 @@
 //
 
 #import "DemoAppDelegate.h"
-#import "DDAudioBufferQueue.h"
-#import "DDAudioBuffer.h"
+#import "DDAudioQueue.h"
+#import "DDAudioQueueBuffer.h"
 
 @implementation DemoAppDelegate
 
@@ -10,7 +10,7 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
-    _audioQueue = [[DDAudioBufferQueue alloc] initWithDelegate:self];
+    _audioQueue = [[DDAudioQueue alloc] initWithDelegate:self];
                
     [_audioQueue scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     [NSThread detachNewThreadSelector:@selector(threadEntry) toTarget:self withObject:nil];
@@ -18,7 +18,7 @@
     sleep(2);
     
     for (int i = 0; i < 3; i++) {
-        DDAudioBuffer * buffer = [_audioQueue allocateBufferWithCapacity:4 error:NULL];
+        DDAudioQueueBuffer * buffer = [_audioQueue allocateBufferWithCapacity:4 error:NULL];
         memset(buffer.bytes, _counter, buffer.capacity);
         buffer.length = buffer.capacity;
         [_audioQueue enqueueBuffer:buffer];
@@ -26,7 +26,7 @@
     }
 }
 
-- (void)audioQueue:(DDAudioBufferQueue *)queue bufferIsAvailable:(DDAudioBuffer *)buffer;
+- (void)audioQueue:(DDAudioQueue *)queue bufferIsAvailable:(DDAudioQueueBuffer *)buffer;
 {
     NSLog(@"bufferIsAvailable: %@ %p <0x%08x>", buffer, buffer.bytes, *(uint32_t *)buffer.bytes);
     memset(buffer.bytes, _counter, buffer.capacity);
@@ -35,7 +35,7 @@
     _counter++;
 }
 
-static void processBuffer(DDAudioBuffer * buffer, DDAudioBufferQueue * queue)
+static void processBuffer(DDAudioQueueBuffer * buffer, DDAudioQueue * queue)
 {
     const void * bytes = DDAudioBufferBytes(buffer);
     NSUInteger length = DDAudioBufferLength(buffer);
@@ -45,7 +45,7 @@ static void processBuffer(DDAudioBuffer * buffer, DDAudioBufferQueue * queue)
 static void MyRenderer(void * context, void * outputData)
 {
     DemoAppDelegate * self = context;
-    DDAudioBufferQueue * queue = self->_audioQueue;
+    DDAudioQueue * queue = self->_audioQueue;
     if (self->_activeBuffer != nil) {
         processBuffer(self->_activeBuffer, queue);
         DDAudioQueueBufferIsAvailable(queue, self->_activeBuffer);

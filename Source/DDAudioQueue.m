@@ -1,10 +1,10 @@
 //
 
-#import "DDAudioBufferQueue.h"
-#import "DDAudioBuffer.h"
+#import "DDAudioQueue.h"
+#import "DDAudioQueueBuffer.h"
 
 
-@implementation DDAudioBufferQueue
+@implementation DDAudioQueue
 
 - (id)initWithDelegate:(id<DDAudioQueueDelegate>)delegate;
 {
@@ -28,7 +28,7 @@
 
 - (void)sendAvaialableBuffersToDelegate;
 {
-    DDAudioBuffer * buffer = NULL;
+    DDAudioQueueBuffer * buffer = NULL;
     do {
         buffer = RAAtomicListPop(&_availableList);
         if (buffer != NULL) {
@@ -40,7 +40,7 @@
 
 static void MyPerformCallback(void * info)
 {
-    DDAudioBufferQueue * self = info;
+    DDAudioQueue * self = info;
     [self sendAvaialableBuffersToDelegate];
 }
 
@@ -83,23 +83,23 @@ static void MyPerformCallback(void * info)
     [self popAllFromList:&_availableList];
 }
 
-- (DDAudioBuffer *)allocateBufferWithCapacity:(NSUInteger)capacity error:(NSError **)error;
+- (DDAudioQueueBuffer *)allocateBufferWithCapacity:(NSUInteger)capacity error:(NSError **)error;
 {
-    DDAudioBuffer * buffer = [[(DDAudioBuffer *)[DDAudioBuffer alloc] initWithCapacity:capacity] autorelease];
+    DDAudioQueueBuffer * buffer = [[(DDAudioQueueBuffer *)[DDAudioQueueBuffer alloc] initWithCapacity:capacity] autorelease];
     [_buffers addObject:buffer];
     return buffer;
 }
 
-- (BOOL)enqueueBuffer:(DDAudioBuffer *)buffer;
+- (BOOL)enqueueBuffer:(DDAudioQueueBuffer *)buffer;
 {
     NSLog(@"enqueueBuffer: %@ %p <0x%08X>", buffer, buffer.bytes, *(uint32_t *)buffer.bytes);
     RAAtomicListInsert(&_bufferList, buffer);
     return YES;
 }
 
-DDAudioBuffer * DDAudioQueueDequeueBuffer(DDAudioBufferQueue * queue)
+DDAudioQueueBuffer * DDAudioQueueDequeueBuffer(DDAudioQueue * queue)
 {
-    DDAudioBuffer * buffer = (id)RAAtomicListPop(&queue->_renderList);
+    DDAudioQueueBuffer * buffer = (id)RAAtomicListPop(&queue->_renderList);
     if (buffer == nil) {
         queue->_renderList = RAAtomicListSteal(&queue->_bufferList);
         RAAtomicListReverse(&queue->_renderList);
@@ -108,7 +108,7 @@ DDAudioBuffer * DDAudioQueueDequeueBuffer(DDAudioBufferQueue * queue)
     return buffer;
 }
 
-void DDAudioQueueBufferIsAvailable(DDAudioBufferQueue * queue, DDAudioBuffer * buffer)
+void DDAudioQueueBufferIsAvailable(DDAudioQueue * queue, DDAudioQueueBuffer * buffer)
 {
     RAAtomicListInsert(&queue->_availableList, buffer);
     CFRunLoopSourceSignal(queue->_runLoopSource);
