@@ -57,10 +57,6 @@
 				256AC3D90F4B6AC300CF3369 /* RunLoopSourceAppDelegate.m */,
 				55B2B609117AAFC700CC1D9A /* DDRunLoopPoker.h */,
 				55B2B60A117AAFC700CC1D9A /* DDRunLoopPoker.m */,
-				55B2B67C117AB73000CC1D9A /* DDAudioBufferQueue.h */,
-				55B2B67D117AB73000CC1D9A /* DDAudioBufferQueue.m */,
-				55B2B67F117AB75100CC1D9A /* RAAtomicList.h */,
-				55B2B680117AB75100CC1D9A /* RAAtomicList.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -94,6 +90,7 @@
 		29B97314FDCFA39411CA2CEA /* RunLoopSource */ = {
 			isa = PBXGroup;
 			children = (
+				55B2BC4C117C005C00CC1D9A /* Source */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -129,6 +126,17 @@
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		55B2BC4C117C005C00CC1D9A /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				55B2B67C117AB73000CC1D9A /* DDAudioBufferQueue.h */,
+				55B2B67D117AB73000CC1D9A /* DDAudioBufferQueue.m */,
+				55B2B67F117AB75100CC1D9A /* RAAtomicList.h */,
+				55B2B680117AB75100CC1D9A /* RAAtomicList.m */,
+			);
+			path = Source;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
