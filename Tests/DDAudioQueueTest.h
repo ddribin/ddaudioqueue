@@ -6,7 +6,7 @@
 @class DDAudioQueue;
 @class DDAudioQueueBuffer;
 
-@interface DDAudioBufferQueueTest : SenTestCase <DDAudioQueueDelegate>
+@interface DDAudioQueueTest : SenTestCase <DDAudioQueueDelegate>
 {
     DDAudioQueue * _queue;
     NSMutableArray * _buffers;

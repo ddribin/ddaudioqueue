@@ -1,6 +1,6 @@
 //
 
-#import "DDAudioBufferQueueTest.h"
+#import "DDAudioQueueTest.h"
 #import "DDAudioQueue.h"
 #import "DDAudioQueueBuffer.h"
 
@@ -8,7 +8,7 @@
 
 static const NSUInteger CAPACITY = 10;
 
-@implementation DDAudioBufferQueueTest
+@implementation DDAudioQueueTest
 
 - (void)audioQueue:(DDAudioQueue *)queue bufferIsAvailable:(DDAudioQueueBuffer *)buffer;
 {
