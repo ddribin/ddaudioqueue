@@ -44,7 +44,7 @@ static const NSUInteger CAPACITY = 10;
 - (void)dequeueAndMakeAvailable
 {
     DDAudioQueueBuffer * buffer = DDAudioQueueDequeueBuffer(_queue);
-    DDAudioQueueBufferIsAvailable(_queue, buffer);
+    DDAudioQueueMakeBufferAvailable(_queue, buffer);
 }
 
 #pragma mark -

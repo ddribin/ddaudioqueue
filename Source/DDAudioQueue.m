@@ -110,7 +110,7 @@ DDAudioQueueBuffer * DDAudioQueueDequeueBuffer(DDAudioQueue * queue)
     return buffer;
 }
 
-void DDAudioQueueBufferIsAvailable(DDAudioQueue * queue, DDAudioQueueBuffer * buffer)
+void DDAudioQueueMakeBufferAvailable(DDAudioQueue * queue, DDAudioQueueBuffer * buffer)
 {
     RAAtomicListInsert(&queue->_availableList, buffer);
     CFRunLoopSourceSignal(queue->_runLoopSource);

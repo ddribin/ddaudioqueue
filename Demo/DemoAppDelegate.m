@@ -37,8 +37,8 @@
 
 static void processBuffer(DDAudioQueueBuffer * buffer, DDAudioQueue * queue)
 {
-    const void * bytes = DDAudioBufferBytes(buffer);
-    NSUInteger length = DDAudioBufferLength(buffer);
+    const void * bytes = DDAudioQueueBufferGetBytes(buffer);
+    NSUInteger length = DDAudioQueueBufferGetLength(buffer);
     NSLog(@"Processing %u data at %p <0x%08X>", length, bytes, *(uint32_t*)bytes);
 }
 
@@ -48,7 +48,7 @@ static void MyRenderer(void * context, void * outputData)
     DDAudioQueue * queue = self->_audioQueue;
     if (self->_activeBuffer != nil) {
         processBuffer(self->_activeBuffer, queue);
-        DDAudioQueueBufferIsAvailable(queue, self->_activeBuffer);
+        DDAudioQueueMakeBufferAvailable(queue, self->_activeBuffer);
         self->_activeBuffer = nil;
     }
     else {

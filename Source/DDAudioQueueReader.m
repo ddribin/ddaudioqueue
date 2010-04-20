@@ -30,7 +30,11 @@
     _readCursor = 0;
 }
 
-UInt32 DDAudioQueueReaderPrimitiveRead(DDAudioQueueReader * reader, void * buffer, UInt32 bytesToRead)
+/**
+ * Reads only from a single reader->_readBuffer.  If reading completes this,
+ * buffer, it gets made available.
+ */
+static UInt32 primitiveRead(DDAudioQueueReader * reader, void * buffer, UInt32 bytesToRead)
 {
     if (reader->_readBuffer == nil) {
         reader->_readBuffer = DDAudioQueueDequeueBuffer(reader->_queue);
@@ -41,11 +45,11 @@ UInt32 DDAudioQueueReaderPrimitiveRead(DDAudioQueueReader * reader, void * buffe
         return 0;
     }
     
-    NSUInteger bufferLength = DDAudioBufferLength(reader->_readBuffer);
+    NSUInteger bufferLength = DDAudioQueueBufferGetLength(reader->_readBuffer);
     NSUInteger bytesRemainingInReadBuffer = bufferLength - reader->_readCursor;
     UInt32 bytesToCopy = MIN(bytesToRead, bytesRemainingInReadBuffer);
 
-    const uint8_t * readBufferBytes = DDAudioBufferBytes(reader->_readBuffer);
+    const uint8_t * readBufferBytes = DDAudioQueueBufferGetBytes(reader->_readBuffer);
     readBufferBytes += reader->_readCursor;
     
     memcpy(buffer, readBufferBytes, bytesToCopy);
@@ -53,7 +57,7 @@ UInt32 DDAudioQueueReaderPrimitiveRead(DDAudioQueueReader * reader, void * buffe
     
     if (bytesToCopy == bytesRemainingInReadBuffer) {
         NSLog(@"finished with buffer: %p", reader->_readBuffer);
-        DDAudioQueueBufferIsAvailable(reader->_queue, reader->_readBuffer);
+        DDAudioQueueMakeBufferAvailable(reader->_queue, reader->_readBuffer);
         reader->_readBuffer = nil;
     }
     
@@ -68,7 +72,7 @@ UInt32 DDAudioQueueReaderRead(DDAudioQueueReader * reader, void * buffer, UInt32
     while (bytesRead < bytesToRead) {
         UInt32 bytesToReadThisIteration = bytesToRead - bytesRead;
         UInt32 bytesReadThisIteration =
-            DDAudioQueueReaderPrimitiveRead(reader, byteBuffer, bytesToReadThisIteration);
+            primitiveRead(reader, byteBuffer, bytesToReadThisIteration);
         
         if (bytesReadThisIteration == 0) {
             break;

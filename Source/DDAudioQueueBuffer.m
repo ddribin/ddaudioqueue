@@ -45,12 +45,12 @@
     _length = length;
 }
 
-const void * DDAudioBufferBytes(DDAudioQueueBuffer * buffer)
+const void * DDAudioQueueBufferGetBytes(DDAudioQueueBuffer * buffer)
 {
     return buffer->_bytes;
 }
 
-NSUInteger DDAudioBufferLength(DDAudioQueueBuffer * buffer)
+NSUInteger DDAudioQueueBufferGetLength(DDAudioQueueBuffer * buffer)
 {
     return buffer->_length;
 }

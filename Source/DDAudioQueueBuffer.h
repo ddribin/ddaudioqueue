@@ -20,5 +20,5 @@
 
 @end
 
-const void * DDAudioBufferBytes(DDAudioQueueBuffer * buffer);
-NSUInteger DDAudioBufferLength(DDAudioQueueBuffer * buffer);
+const void * DDAudioQueueBufferGetBytes(DDAudioQueueBuffer * buffer);
+NSUInteger DDAudioQueueBufferGetLength(DDAudioQueueBuffer * buffer);

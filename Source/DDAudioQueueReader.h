@@ -21,7 +21,7 @@
 /**
  * Reads bytesToRead bytes into the buffer, dequeing as necessary.  If there
  * is not enough data available, it only copies in the number of bytes
- * read. [Maybe fill in the rest as 0 automatically?]
+ * read.
  *
  * @return The actual number of bytes dequeued and copied into the buffer
  */

@@ -34,4 +34,4 @@
 
 DDAudioQueueBuffer * DDAudioQueueDequeueBuffer(DDAudioQueue * queue);
 
-void DDAudioQueueBufferIsAvailable(DDAudioQueue * queue, DDAudioQueueBuffer * buffer);
+void DDAudioQueueMakeBufferAvailable(DDAudioQueue * queue, DDAudioQueueBuffer * buffer);
