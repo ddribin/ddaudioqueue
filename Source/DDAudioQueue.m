@@ -93,7 +93,8 @@ static void MyPerformCallback(void * info)
 
 - (BOOL)enqueueBuffer:(DDAudioQueueBuffer *)buffer;
 {
-    NSLog(@"enqueueBuffer: %@ %p <0x%08X>", buffer, buffer.bytes, *(uint32_t *)buffer.bytes);
+    NSAssert(buffer != nil, @"Buffer must not be nil");
+    NSLog(@"enqueueBuffer: %@ %p %u <0x%08X>", buffer, buffer.bytes, buffer.length);
     RAAtomicListInsert(&_bufferList, buffer);
     return YES;
 }

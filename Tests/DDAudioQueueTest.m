@@ -16,20 +16,6 @@ static const NSUInteger CAPACITY = 10;
     [_availableBuffers addObject:buffer];
 }
 
-- (void)setUp
-{
-    _queue = [[DDAudioQueue alloc] initWithDelegate:self];
-    [_queue scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
-    _buffers = [NSMutableArray array];
-    _availableBuffers = [NSMutableArray array];
-}
-
-- (void)tearDown
-{
-    [_queue removeFromRunLoop];
-    [_queue release];
-}
-
 - (DDAudioQueueBuffer *)allocateBuffer
 {
     DDAudioQueueBuffer * buffer = [_queue allocateBufferWithCapacity:CAPACITY error:NULL];
@@ -59,6 +45,22 @@ static const NSUInteger CAPACITY = 10;
 {
     DDAudioQueueBuffer * buffer = DDAudioQueueDequeueBuffer(_queue);
     DDAudioQueueBufferIsAvailable(_queue, buffer);
+}
+
+#pragma mark -
+
+- (void)setUp
+{
+    _queue = [[DDAudioQueue alloc] initWithDelegate:self];
+    [_queue scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+    _buffers = [NSMutableArray array];
+    _availableBuffers = [NSMutableArray array];
+}
+
+- (void)tearDown
+{
+    [_queue removeFromRunLoop];
+    [_queue release];
 }
 
 #pragma mark -
