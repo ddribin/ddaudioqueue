@@ -7,6 +7,8 @@
 
 @implementation DDAudioQueueReader
 
+@synthesize underflowCount = _underflowCount;
+
 - (id)initWithAudioQueue:(DDAudioQueue *)queue;
 {
     self = [super init];
@@ -28,6 +30,7 @@
 {
     _readBuffer = nil;
     _readCursor = 0;
+    _underflowCount = 0;
 }
 
 /**
@@ -81,7 +84,7 @@ UInt32 DDAudioQueueReaderRead(DDAudioQueueReader * reader, void * buffer, UInt32
     }
     
     if (bytesRead < bytesToRead) {
-        printf("underflow: %u %u\n", (unsigned)bytesToRead, (unsigned)bytesRead);
+        reader->_underflowCount++;
     }
     
     return bytesRead;

@@ -258,4 +258,26 @@ static const NSUInteger READ_BUFFER_SIZE = 50;
     STAssertEquals([self availableBuffer:0], [self buffer:2], nil);
 }
 
+- (void)testTriggersUnderflowReadingMoreBytesThanEnqueued
+{
+    [self enqueueBuffer:0 withValue:0x01 length:10];
+    
+    [self readBytes:READ_BUFFER_SIZE];
+    
+    STAssertEquals([_reader underflowCount], (UInt32)1, nil);
+}
+
+- (void)testTriggersUnderflowOnFence
+{
+    [self enqueueBuffer:0 withValue:0x01 length:10];
+    [_queue enqueueFenceBuffer];
+    [self enqueueBuffer:1 withValue:0x02 length:10];
+    
+    [self readBytes:READ_BUFFER_SIZE];
+    [self spinRunLoop];
+    
+    STAssertEquals([_reader underflowCount], (UInt32)1, nil);
+}
+
+
 @end

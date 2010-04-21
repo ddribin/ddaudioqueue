@@ -10,7 +10,10 @@
     DDAudioQueue * _queue;
     DDAudioQueueBuffer * _readBuffer;
     UInt32 _readCursor;
+    UInt32 _underflowCount;
 }
+
+@property (nonatomic, readonly) UInt32 underflowCount;
 
 - (id)initWithAudioQueue:(DDAudioQueue *)queue;
 
