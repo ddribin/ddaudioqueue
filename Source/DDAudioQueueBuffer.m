@@ -3,6 +3,7 @@
 #import "DDAudioQueueBuffer.h"
 
 
+#if 0
 @implementation DDAudioQueueBuffer
 
 - (id)initWithCapacity:(NSUInteger)capacity;
@@ -56,3 +57,14 @@ NSUInteger DDAudioQueueBufferGetLength(DDAudioQueueBuffer * buffer)
 }
 
 @end
+#endif
+
+const void * DDAudioQueueBufferGetBytes(DDAudioQueueBuffer * buffer)
+{
+    return buffer->bytes;
+}
+
+NSUInteger DDAudioQueueBufferGetLength(DDAudioQueueBuffer * buffer)
+{
+    return buffer->length;
+}

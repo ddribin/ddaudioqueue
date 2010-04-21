@@ -14,7 +14,8 @@ static const NSUInteger READ_BUFFER_SIZE = 50;
 
 - (DDAudioQueueBuffer *)buffer:(NSUInteger)index
 {
-    return [_buffers objectAtIndex:index];
+    NSValue * value = [_buffers objectAtIndex:index];
+    return [value pointerValue];
 }
 
 - (void)assertReadBufferFrom:(NSUInteger)from to:(NSUInteger)to isSetTo:(uint8_t)value
@@ -30,10 +31,10 @@ static const NSUInteger READ_BUFFER_SIZE = 50;
 - (void)enqueueBuffer:(NSUInteger)bufferIndex withValue:(uint8_t)value length:(NSUInteger)length
 {
     DDAudioQueueBuffer * buffer = [self buffer:bufferIndex];
-    STAssertNotNil(buffer, nil);
-    STAssertTrue(length <= buffer.capacity, nil);
-    memset([buffer bytes], value, length);
-    buffer.length = length;
+    STAssertFalse(buffer == NULL, nil);
+    STAssertTrue(length <= buffer->capacity, nil);
+    memset(buffer->bytes, value, length);
+    buffer->length = length;
     [_queue enqueueBuffer:buffer];
 }
 
@@ -55,7 +56,13 @@ static const NSUInteger READ_BUFFER_SIZE = 50;
 {
     STAssertEquals(_queue, queue, nil);
     NSLog(@"bufferIsAvailable: %p", buffer);
-    [_availableBuffers addObject:buffer];
+    [_availableBuffers addObject:[NSValue valueWithPointer:buffer]];
+}
+
+- (DDAudioQueueBuffer *)availableBuffer:(NSUInteger)index
+{
+    NSValue * value = [_availableBuffers objectAtIndex:index];
+    return [value pointerValue];
 }
 
 - (void)spinRunLoop
@@ -70,8 +77,8 @@ static const NSUInteger READ_BUFFER_SIZE = 50;
 {
     for (int i = 0; i < 3; i++) {
         DDAudioQueueBuffer * buffer = [_queue allocateBufferWithCapacity:QUEUE_BUFFER_SIZE error:NULL];
-        STAssertNotNil(buffer, nil);
-        [_buffers addObject:buffer];
+        STAssertFalse(buffer == NULL, nil);
+        [_buffers addObject:[NSValue valueWithPointer:buffer]];
     }
 }
 
@@ -125,8 +132,8 @@ static const NSUInteger READ_BUFFER_SIZE = 50;
 {
     DDAudioQueueBuffer * buffer = [self buffer:0];
     uint8_t pattern[] = {0x01,  0x01, 0x02, 0x02};
-    memcpy([buffer bytes], pattern, 4);
-    buffer.length = 4;
+    memcpy(buffer->bytes, pattern, 4);
+    buffer->length = 4;
     [_queue enqueueBuffer:buffer];
     
     UInt32 bytesRead = 0;
@@ -182,7 +189,7 @@ static const NSUInteger READ_BUFFER_SIZE = 50;
     [self spinRunLoop];
     
     STAssertEquals([_availableBuffers count], (NSUInteger)1, nil);
-    STAssertEquals([_availableBuffers objectAtIndex:0], [self buffer:0], nil);
+    STAssertEquals([self availableBuffer:0], [self buffer:0], nil);
 }
 
 - (void)testMakesBothBuffersAavailableAfterMultiBufferRead
@@ -195,8 +202,8 @@ static const NSUInteger READ_BUFFER_SIZE = 50;
     
     STAssertEquals([_availableBuffers count], (NSUInteger)2, nil);
     // They become available in reverse order
-    STAssertEquals([_availableBuffers objectAtIndex:0], [self buffer:1], nil);
-    STAssertEquals([_availableBuffers objectAtIndex:1], [self buffer:0], nil);
+    STAssertEquals([self availableBuffer:0], [self buffer:1], nil);
+    STAssertEquals([self availableBuffer:1], [self buffer:0], nil);
 }
 
 @end

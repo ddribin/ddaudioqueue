@@ -2,9 +2,9 @@
 
 #import <SenTestingKit/SenTestingKit.h>
 #import "DDAudioQueueDelegate.h"
+#import "DDAudioQueueBuffer.h"
 
 @class DDAudioQueue;
-@class DDAudioQueueBuffer;
 
 @interface DDAudioQueueTest : SenTestCase <DDAudioQueueDelegate>
 {

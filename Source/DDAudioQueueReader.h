@@ -1,9 +1,9 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "DDAudioQueueBuffer.h"
 
 @class DDAudioQueue;
-@class DDAudioQueueBuffer;
 
 @interface DDAudioQueueReader : NSObject
 {

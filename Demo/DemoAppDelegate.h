@@ -4,7 +4,6 @@
 #import "DDAudioQueueDelegate.h"
 
 @class DDAudioQueue;
-@class DDAudioQueueBuffer;
 
 @interface DemoAppDelegate : NSObject <NSApplicationDelegate, DDAudioQueueDelegate>
 {

@@ -1,9 +1,10 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "DDAudioQueueBuffer.h"
 
 @class DDAudioQueue;
-@class DDAudioQueueBuffer;
+
 
 @protocol DDAudioQueueDelegate <NSObject>
 

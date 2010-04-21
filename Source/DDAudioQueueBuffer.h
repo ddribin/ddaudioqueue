@@ -2,7 +2,14 @@
 
 #import <Foundation/Foundation.h>
 
+typedef struct DDAudioQueueBuffer
+{
+    const NSUInteger capacity;
+    NSUInteger length;
+    void * const bytes;
+} DDAudioQueueBuffer;
 
+#if 0
 @interface DDAudioQueueBuffer : NSObject
 {
 @private
@@ -19,6 +26,7 @@
 - (id)initWithCapacity:(NSUInteger)capacity;
 
 @end
+#endif
 
 const void * DDAudioQueueBufferGetBytes(DDAudioQueueBuffer * buffer);
 NSUInteger DDAudioQueueBufferGetLength(DDAudioQueueBuffer * buffer);

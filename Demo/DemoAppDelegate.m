@@ -19,8 +19,8 @@
     
     for (int i = 0; i < 3; i++) {
         DDAudioQueueBuffer * buffer = [_audioQueue allocateBufferWithCapacity:4 error:NULL];
-        memset(buffer.bytes, _counter, buffer.capacity);
-        buffer.length = buffer.capacity;
+        memset(buffer->bytes, _counter, buffer->capacity);
+        buffer->length = buffer->capacity;
         [_audioQueue enqueueBuffer:buffer];
         _counter++;
     }
@@ -28,9 +28,9 @@
 
 - (void)audioQueue:(DDAudioQueue *)queue bufferIsAvailable:(DDAudioQueueBuffer *)buffer;
 {
-    NSLog(@"bufferIsAvailable: %@ %p <0x%08x>", buffer, buffer.bytes, *(uint32_t *)buffer.bytes);
-    memset(buffer.bytes, _counter, buffer.capacity);
-    buffer.length = buffer.capacity;
+    NSLog(@"bufferIsAvailable: %@ %p <0x%08x>", buffer, buffer->bytes, *(uint32_t *)buffer->bytes);
+    memset(buffer->bytes, _counter, buffer->capacity);
+    buffer->length = buffer->capacity;
     [_audioQueue enqueueBuffer:buffer];
     _counter++;
 }

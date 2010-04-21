@@ -6,6 +6,8 @@
 
 #define BUFFER_COUNT (sizeof(_buffers)/sizeof(*_buffers))
 
+#define STAssertNull(_A_, _M_) STAssertNil((id)_A_, _M_)
+
 static const NSUInteger CAPACITY = 10;
 
 @implementation DDAudioQueueTest
@@ -13,7 +15,13 @@ static const NSUInteger CAPACITY = 10;
 - (void)audioQueue:(DDAudioQueue *)queue bufferIsAvailable:(DDAudioQueueBuffer *)buffer;
 {
     STAssertEquals(_queue, queue, nil);
-    [_availableBuffers addObject:buffer];
+    [_availableBuffers addObject:[NSValue valueWithPointer:buffer]];
+}
+
+- (DDAudioQueueBuffer *)availableBuffer:(NSUInteger)index
+{
+    NSValue * value = [_availableBuffers objectAtIndex:index];
+    return [value pointerValue];
 }
 
 - (DDAudioQueueBuffer *)allocateBuffer
@@ -26,13 +34,14 @@ static const NSUInteger CAPACITY = 10;
 {
     for (int i = 0; i < count; i++) {
         DDAudioQueueBuffer * buffer = [self allocateBuffer];
-        [_buffers addObject:buffer];
+        [_buffers addObject:[NSValue valueWithPointer:buffer]];
     }
 }
 
 - (DDAudioQueueBuffer *)buffer:(NSUInteger)index;
 {
-    return [_buffers objectAtIndex:index];
+    NSValue * bufferValue = [_buffers objectAtIndex:index];
+    return [bufferValue pointerValue];
 }
 
 - (void)spinRunLoop
@@ -70,10 +79,10 @@ static const NSUInteger CAPACITY = 10;
 {
     DDAudioQueueBuffer * buffer = [self allocateBuffer];
     
-    STAssertNotNil(buffer, nil);
-    STAssertEquals(buffer.capacity, CAPACITY, nil);
-    STAssertEquals(buffer.length, (NSUInteger)0, nil);
-    STAssertNotNil(buffer.bytes, nil);
+    STAssertFalse(buffer == NULL, nil);
+    STAssertEquals(buffer->capacity, CAPACITY, nil);
+    STAssertEquals(buffer->length, (NSUInteger)0, nil);
+    STAssertNotNil(buffer->bytes, nil);
 }
 
 - (void)testDequeuesBuffersInOrderTheyAreEnqeueued
@@ -95,14 +104,14 @@ static const NSUInteger CAPACITY = 10;
     (void)DDAudioQueueDequeueBuffer(_queue);
     DDAudioQueueBuffer * dequeuedBuffer = DDAudioQueueDequeueBuffer(_queue);
     
-    STAssertNil(dequeuedBuffer, nil);
+    STAssertNull(dequeuedBuffer, nil);
 }
 
 - (void)testDequeuessNilOnEmpty
 {
     DDAudioQueueBuffer * dequeuedBuffer = DDAudioQueueDequeueBuffer(_queue);
     
-    STAssertNil(dequeuedBuffer, nil);
+    STAssertNull(dequeuedBuffer, nil);
 }
 
 - (void)testCallsDelegateWhenBufferBecomesAvailable
@@ -114,21 +123,21 @@ static const NSUInteger CAPACITY = 10;
     [self spinRunLoop];
     
     STAssertEquals([_availableBuffers count], (NSUInteger)1, nil);
-    STAssertEquals([_availableBuffers objectAtIndex:0], buffer, nil);
+    STAssertEquals([self availableBuffer:0], buffer, nil);
 }
 
 - (void)testResetsAvailableBufferLengthToZero
 {
     DDAudioQueueBuffer * buffer = [self allocateBuffer];
     // Ensure the length is not zero
-    buffer.length = CAPACITY;
+    buffer->length = CAPACITY;
     [_queue enqueueBuffer:buffer];
     [self dequeueAndMakeAvailable];
     
     [self spinRunLoop];
     
-    buffer = [_availableBuffers objectAtIndex:0];
-    STAssertEquals(buffer.length, (NSUInteger)0, nil);
+    buffer = [self availableBuffer:0];
+    STAssertEquals(buffer->length, (NSUInteger)0, nil);
 }
 
 - (void)testSendsMultipleAvailableToDelegateInReverseOrder
@@ -142,8 +151,8 @@ static const NSUInteger CAPACITY = 10;
     [self spinRunLoop];
     
     STAssertEquals([_availableBuffers count], (NSUInteger)2, nil);
-    STAssertEquals([_availableBuffers objectAtIndex:0], [self buffer:1], nil);
-    STAssertEquals([_availableBuffers objectAtIndex:1], [self buffer:0], nil);
+    STAssertEquals([self availableBuffer:0], [self buffer:1], nil);
+    STAssertEquals([self availableBuffer:1], [self buffer:0], nil);
 }
 
 - (void)testDequeuePopsFromInternalListsInProperOrder
@@ -166,7 +175,7 @@ static const NSUInteger CAPACITY = 10;
     STAssertEquals(DDAudioQueueDequeueBuffer(_queue), [self buffer:2], nil);
     STAssertEquals(DDAudioQueueDequeueBuffer(_queue), [self buffer:3], nil);
     STAssertEquals(DDAudioQueueDequeueBuffer(_queue), [self buffer:4], nil);
-    STAssertNil(DDAudioQueueDequeueBuffer(_queue), nil);
+    STAssertNull(DDAudioQueueDequeueBuffer(_queue), nil);
 }
 
 @end
