@@ -56,7 +56,6 @@ static UInt32 primitiveRead(DDAudioQueueReader * reader, void * buffer, UInt32 b
     reader->_readCursor += bytesToCopy;
     
     if (bytesToCopy == bytesRemainingInReadBuffer) {
-        NSLog(@"finished with buffer: %p", reader->_readBuffer);
         DDAudioQueueMakeBufferAvailable(reader->_queue, reader->_readBuffer);
         reader->_readBuffer = nil;
     }
