@@ -12,17 +12,15 @@ typedef struct DDAudioQueueListNode
 
 #define NODE_OFFSET offsetof(DDAudioQueueListNode, next)
 
-#define _COMPILE_ASSERT_SYMBOL_INNER(line, msg) __COMPILE_ASSERT_ ## line ## __ ## msg
-#define _COMPILE_ASSERT_SYMBOL(line, msg) _COMPILE_ASSERT_SYMBOL_INNER(line, msg)
-#define COMPILE_ASSERT(test, msg) \
-  typedef char _COMPILE_ASSERT_SYMBOL(__LINE__, msg) [ ((test) ? 1 : -1) ]
-
-COMPILE_ASSERT(offsetof(DDAudioQueueListNode, buffer) == 0, invalid_node_offset);
-
 static DDAudioQueueListNode sFenceNode;
 DDAudioQueueBuffer * DDAudioQueueFenceBuffer = &sFenceNode.buffer;
 
+static void MyPerformCallback(void * info);
+
 @interface DDAudioQueue ()
+- (void)callDelegateForAvailableBuffers;
+- (void)callDelegateForBuffer:(DDAudioQueueBuffer *)buffer;
+
 - (void *)malloc:(size_t)size;
 - (void)free:(void *)bytes;
 @end
@@ -59,15 +57,33 @@ DDAudioQueueBuffer * DDAudioQueueFenceBuffer = &sFenceNode.buffer;
 {
     [self removeFromRunLoop];
     [self reset];
+    [_mallocData release];
     [super dealloc];
 }
 
-- (void)callDelegateForBuffer:(DDAudioQueueBuffer *)buffer
+static void MyPerformCallback(void * info)
+{
+    DDAudioQueue * self = info;
+    [self callDelegateForAvailableBuffers];
+}
+
+- (void)callDelegateForAvailableBuffers;
+{
+    DDAudioQueueBuffer * buffer = NULL;
+    DDAtomicListRef availableList = DDAtomicListSteal(&_availableList);
+    DDAtomicListReverse(&availableList, NODE_OFFSET);
+    do {
+        buffer = DDAtomicListPop(&availableList, NODE_OFFSET);
+        [self callDelegateForBuffer:buffer];
+    } while (buffer != NULL);
+}
+
+- (void)callDelegateForBuffer:(DDAudioQueueBuffer *)buffer;
 {
     if (buffer == NULL) {
         return;
     }
-
+    
     buffer->length = 0;
     if (buffer == DDAudioQueueFenceBuffer) {
         if ([_delegate respondsToSelector:@selector(audioQueueDidReceiveFence:)]) {
@@ -76,21 +92,6 @@ DDAudioQueueBuffer * DDAudioQueueFenceBuffer = &sFenceNode.buffer;
     } else {
         [self->_delegate audioQueue:self bufferIsAvailable:buffer];
     }
-}
-
-- (void)sendAvaialableBuffersToDelegate;
-{
-    DDAudioQueueBuffer * buffer = NULL;
-    do {
-        buffer = DDAtomicListPop(&_availableList, NODE_OFFSET);
-        [self callDelegateForBuffer:buffer];
-    } while (buffer != NULL);
-}
-
-static void MyPerformCallback(void * info)
-{
-    DDAudioQueue * self = info;
-    [self sendAvaialableBuffersToDelegate];
 }
 
 - (void)scheduleInRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode;

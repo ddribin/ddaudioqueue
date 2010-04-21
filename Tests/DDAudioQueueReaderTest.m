@@ -201,10 +201,10 @@ static const NSUInteger READ_BUFFER_SIZE = 50;
     [self spinRunLoop];
     
     STAssertEquals([_availableBuffers count], (NSUInteger)3, nil);
-    // They become available in reverse order
-    STAssertEquals([self availableBuffer:0], [self buffer:2], nil);
+    // They become available in order they're made available
+    STAssertEquals([self availableBuffer:0], [self buffer:0], nil);
     STAssertEquals([self availableBuffer:1], [self buffer:1], nil);
-    STAssertEquals([self availableBuffer:2], [self buffer:0], nil);
+    STAssertEquals([self availableBuffer:2], [self buffer:2], nil);
 }
 
 - (void)testReadingMoreBytesThanEqueued
@@ -217,10 +217,10 @@ static const NSUInteger READ_BUFFER_SIZE = 50;
     [self spinRunLoop];
     
     STAssertEquals([_availableBuffers count], (NSUInteger)3, nil);
-    // They become available in reverse order
-    STAssertEquals([self availableBuffer:0], [self buffer:2], nil);
+    // They become available in order they're made available
+    STAssertEquals([self availableBuffer:0], [self buffer:0], nil);
     STAssertEquals([self availableBuffer:1], [self buffer:1], nil);
-    STAssertEquals([self availableBuffer:2], [self buffer:0], nil);
+    STAssertEquals([self availableBuffer:2], [self buffer:2], nil);
 }
 
 - (void)testStopsReadingAtFence
@@ -235,9 +235,9 @@ static const NSUInteger READ_BUFFER_SIZE = 50;
     
     STAssertEquals(bytesRead, (UInt32)20, nil);
     STAssertEquals([_availableBuffers count], (NSUInteger)2, nil);
-    // They become available in reverse order
-    STAssertEquals([self availableBuffer:0], [self buffer:1], nil);
-    STAssertEquals([self availableBuffer:1], [self buffer:0], nil);
+    // They become available in order they're made available
+    STAssertEquals([self availableBuffer:0], [self buffer:0], nil);
+    STAssertEquals([self availableBuffer:1], [self buffer:1], nil);
 }
 
 - (void)testContinuesReadingAtFence

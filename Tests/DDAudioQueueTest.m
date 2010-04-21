@@ -21,6 +21,9 @@ static const NSUInteger CAPACITY = 10;
 - (void)audioQueueDidReceiveFence:(DDAudioQueue *)queue;
 {
     _fenceCount++;
+    if (_addFenceToAvailableBuffers) {
+        [_availableBuffers addObject:[NSValue valueWithPointer:DDAudioQueueFenceBuffer]];
+    }
 }
 
 - (DDAudioQueueBuffer *)availableBuffer:(NSUInteger)index
@@ -69,6 +72,7 @@ static const NSUInteger CAPACITY = 10;
     [_queue scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     _buffers = [NSMutableArray array];
     _availableBuffers = [NSMutableArray array];
+    _addFenceToAvailableBuffers = NO;
     _fenceCount = 0;
 }
 
@@ -152,7 +156,7 @@ static const NSUInteger CAPACITY = 10;
     STAssertEquals(buffer->length, (NSUInteger)0, nil);
 }
 
-- (void)testSendsMultipleAvailableToDelegateInReverseOrder
+- (void)testSendsMultipleAvailableToDelegateInSameOrder
 {
     [self allocateBuffers:2];
     [_queue enqueueBuffer:[self buffer:0]];
@@ -163,8 +167,8 @@ static const NSUInteger CAPACITY = 10;
     [self spinRunLoop];
     
     STAssertEquals([_availableBuffers count], (NSUInteger)2, nil);
-    STAssertEquals([self availableBuffer:0], [self buffer:1], nil);
-    STAssertEquals([self availableBuffer:1], [self buffer:0], nil);
+    STAssertEquals([self availableBuffer:0], [self buffer:0], nil);
+    STAssertEquals([self availableBuffer:1], [self buffer:1], nil);
 }
 
 - (void)testDequeuePopsFromInternalListsInProperOrder
@@ -182,7 +186,7 @@ static const NSUInteger CAPACITY = 10;
     [_queue enqueueBuffer:[self buffer:4]];
      
     // At this point there should be 2 buffers on the render list and 2 on the buffer list
-    // Make sure they come out in the right order
+    // Make sure they come out in the right order.
     STAssertEquals(DDAudioQueueDequeueBuffer(_queue), [self buffer:1], nil);
     STAssertEquals(DDAudioQueueDequeueBuffer(_queue), [self buffer:2], nil);
     STAssertEquals(DDAudioQueueDequeueBuffer(_queue), [self buffer:3], nil);
@@ -225,6 +229,21 @@ static const NSUInteger CAPACITY = 10;
     [self spinRunLoop];
     
     STAssertEquals(_fenceCount, 1, nil);
+}
+
+- (void)testCallsFenceAfterMakingPriorBuffersAvailable
+{
+    _addFenceToAvailableBuffers = YES;
+    [self allocateBuffers:1];
+    [_queue enqueueBuffer:[self buffer:0]];
+    [_queue enqueueFenceBuffer];
+    [self dequeueAndMakeAvailable];
+    [self dequeueAndMakeAvailable];
+    [self spinRunLoop];
+    
+    STAssertEquals([_availableBuffers count], (NSUInteger)2, nil);
+    STAssertEquals([self availableBuffer:0], [self buffer:0], nil);
+    STAssertEquals([self availableBuffer:1], DDAudioQueueFenceBuffer, nil);
 }
 
 @end
