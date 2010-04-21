@@ -17,7 +17,14 @@ typedef struct DDAudioQueueListNode
 
 #define NODE_OFFSET offsetof(DDAudioQueueListNode, next)
 
-static DDAudioQueueListNode sFenceNode;
+static DDAudioQueueListNode sFenceNode = {
+    .buffer = {
+        .capacity = 0,
+        .length = 0,
+        .bytes = NULL,
+    },
+    .next = NULL,
+};
 DDAudioQueueBuffer * DDAudioQueueFenceBuffer = &sFenceNode.buffer;
 
 static void MyPerformCallback(void * info);
@@ -31,20 +38,6 @@ static void MyPerformCallback(void * info);
 @end
 
 @implementation DDAudioQueue
-
-+ (void)initialize
-{
-    if (self != [DDAudioQueue class]) {
-        return;
-    }
-    
-    DDAudioQueueBuffer tempBuffer = {
-        .capacity = 0,
-        .length = 0,
-        .bytes = NULL,
-    };
-    memcpy(DDAudioQueueFenceBuffer, &tempBuffer, sizeof(DDAudioQueueFenceBuffer));
-}
 
 - (id)initWithDelegate:(id<DDAudioQueueDelegate>)delegate;
 {
