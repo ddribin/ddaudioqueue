@@ -80,6 +80,10 @@ UInt32 DDAudioQueueReaderRead(DDAudioQueueReader * reader, void * buffer, UInt32
         byteBuffer += bytesReadThisIteration;
     }
     
+    if (bytesRead < bytesToRead) {
+        printf("underflow: %lu %lu\n", bytesToRead, bytesRead);
+    }
+    
     return bytesRead;
 }
 
