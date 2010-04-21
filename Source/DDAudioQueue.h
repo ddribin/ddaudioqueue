@@ -1,7 +1,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "RAAtomicList.h"
 #import "DDAtomicList.h"
 #import "DDAudioQueueBuffer.h"
 
@@ -11,14 +10,10 @@
 {
     id<DDAudioQueueDelegate> _delegate;
     BOOL _isStarted;
-    NSMutableArray * _buffers;
-    RAAtomicListRef _bufferList;
-    RAAtomicListRef _renderList;
-    RAAtomicListRef _availableList;
     NSMutableDictionary * _mallocData;
-    DDAtomicListRef _bufferList2;
-    DDAtomicListRef _renderList2;
-    DDAtomicListRef _availableList2;
+    DDAtomicListRef _bufferList;
+    DDAtomicListRef _renderList;
+    DDAtomicListRef _availableList;
     CFRunLoopRef _runLoop;
     CFRunLoopSourceRef _runLoopSource;
 }

@@ -45,11 +45,11 @@ static UInt32 primitiveRead(DDAudioQueueReader * reader, void * buffer, UInt32 b
         return 0;
     }
     
-    NSUInteger bufferLength = DDAudioQueueBufferGetLength(reader->_readBuffer);
+    NSUInteger bufferLength = reader->_readBuffer->length;
     NSUInteger bytesRemainingInReadBuffer = bufferLength - reader->_readCursor;
     UInt32 bytesToCopy = MIN(bytesToRead, bytesRemainingInReadBuffer);
 
-    const uint8_t * readBufferBytes = DDAudioQueueBufferGetBytes(reader->_readBuffer);
+    const uint8_t * readBufferBytes = reader->_readBuffer->bytes;
     readBufferBytes += reader->_readCursor;
     
     memcpy(buffer, readBufferBytes, bytesToCopy);

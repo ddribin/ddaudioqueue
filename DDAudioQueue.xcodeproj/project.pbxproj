@@ -28,12 +28,8 @@
 		5563B58C117DE0F4001C1C0B /* DDAtomicList.c in Sources */ = {isa = PBXBuildFile; fileRef = 5563B58A117DE0F4001C1C0B /* DDAtomicList.c */; };
 		5563B5ED117DE958001C1C0B /* DDAtomicListTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5563B5EC117DE958001C1C0B /* DDAtomicListTest.m */; };
 		55B2B67E117AB73000CC1D9A /* DDAudioQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B2B67D117AB73000CC1D9A /* DDAudioQueue.m */; };
-		55B2B681117AB75100CC1D9A /* RAAtomicList.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B2B680117AB75100CC1D9A /* RAAtomicList.m */; };
 		55B2BCAC117C033100CC1D9A /* DDAudioQueueTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B2BCAA117C032600CC1D9A /* DDAudioQueueTest.m */; };
-		55B2BCC1117C042000CC1D9A /* DDAudioQueueBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B2BCC0117C042000CC1D9A /* DDAudioQueueBuffer.m */; };
 		55B2BCC8117C046D00CC1D9A /* DDAudioQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B2B67D117AB73000CC1D9A /* DDAudioQueue.m */; };
-		55B2BCC9117C046D00CC1D9A /* DDAudioQueueBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B2BCC0117C042000CC1D9A /* DDAudioQueueBuffer.m */; };
-		55B2BCCA117C046D00CC1D9A /* RAAtomicList.m in Sources */ = {isa = PBXBuildFile; fileRef = 55B2B680117AB75100CC1D9A /* RAAtomicList.m */; };
 		55EFEF92117C8E2F00E2F8B6 /* DDAudioQueueReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 55EFEF91117C8E2F00E2F8B6 /* DDAudioQueueReader.m */; };
 		55EFEF93117C8E2F00E2F8B6 /* DDAudioQueueReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 55EFEF91117C8E2F00E2F8B6 /* DDAudioQueueReader.m */; };
 		55EFEFA6117CE82E00E2F8B6 /* DDAudioQueueReaderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 55EFEFA5117CE82E00E2F8B6 /* DDAudioQueueReaderTest.m */; };
@@ -76,14 +72,11 @@
 		5563B5EC117DE958001C1C0B /* DDAtomicListTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDAtomicListTest.m; sourceTree = "<group>"; };
 		55B2B67C117AB73000CC1D9A /* DDAudioQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDAudioQueue.h; sourceTree = "<group>"; };
 		55B2B67D117AB73000CC1D9A /* DDAudioQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDAudioQueue.m; sourceTree = "<group>"; };
-		55B2B67F117AB75100CC1D9A /* RAAtomicList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAAtomicList.h; sourceTree = "<group>"; };
-		55B2B680117AB75100CC1D9A /* RAAtomicList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAAtomicList.m; sourceTree = "<group>"; };
 		55B2BC98117C029A00CC1D9A /* UnitTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnitTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		55B2BC99117C029A00CC1D9A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		55B2BCA9117C032600CC1D9A /* DDAudioQueueTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDAudioQueueTest.h; sourceTree = "<group>"; };
 		55B2BCAA117C032600CC1D9A /* DDAudioQueueTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDAudioQueueTest.m; sourceTree = "<group>"; };
 		55B2BCBF117C042000CC1D9A /* DDAudioQueueBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDAudioQueueBuffer.h; sourceTree = "<group>"; };
-		55B2BCC0117C042000CC1D9A /* DDAudioQueueBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDAudioQueueBuffer.m; sourceTree = "<group>"; };
 		55B2BCF5117C05BD00CC1D9A /* DDAudioQueueDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDAudioQueueDelegate.h; sourceTree = "<group>"; };
 		55EFEF90117C8E2F00E2F8B6 /* DDAudioQueueReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDAudioQueueReader.h; sourceTree = "<group>"; };
 		55EFEF91117C8E2F00E2F8B6 /* DDAudioQueueReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDAudioQueueReader.m; sourceTree = "<group>"; };
@@ -195,13 +188,10 @@
 				55B2B67D117AB73000CC1D9A /* DDAudioQueue.m */,
 				55B2BCF5117C05BD00CC1D9A /* DDAudioQueueDelegate.h */,
 				55B2BCBF117C042000CC1D9A /* DDAudioQueueBuffer.h */,
-				55B2BCC0117C042000CC1D9A /* DDAudioQueueBuffer.m */,
 				55EFEF90117C8E2F00E2F8B6 /* DDAudioQueueReader.h */,
 				55EFEF91117C8E2F00E2F8B6 /* DDAudioQueueReader.m */,
 				5563B589117DE0F4001C1C0B /* DDAtomicList.h */,
 				5563B58A117DE0F4001C1C0B /* DDAtomicList.c */,
-				55B2B67F117AB75100CC1D9A /* RAAtomicList.h */,
-				55B2B680117AB75100CC1D9A /* RAAtomicList.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -330,8 +320,6 @@
 			files = (
 				55B2BCAC117C033100CC1D9A /* DDAudioQueueTest.m in Sources */,
 				55B2BCC8117C046D00CC1D9A /* DDAudioQueue.m in Sources */,
-				55B2BCC9117C046D00CC1D9A /* DDAudioQueueBuffer.m in Sources */,
-				55B2BCCA117C046D00CC1D9A /* RAAtomicList.m in Sources */,
 				55EFEF92117C8E2F00E2F8B6 /* DDAudioQueueReader.m in Sources */,
 				55EFEFA6117CE82E00E2F8B6 /* DDAudioQueueReaderTest.m in Sources */,
 				5563B58C117DE0F4001C1C0B /* DDAtomicList.c in Sources */,
@@ -346,8 +334,6 @@
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				256AC3DA0F4B6AC300CF3369 /* DemoAppDelegate.m in Sources */,
 				55B2B67E117AB73000CC1D9A /* DDAudioQueue.m in Sources */,
-				55B2B681117AB75100CC1D9A /* RAAtomicList.m in Sources */,
-				55B2BCC1117C042000CC1D9A /* DDAudioQueueBuffer.m in Sources */,
 				55EFEF93117C8E2F00E2F8B6 /* DDAudioQueueReader.m in Sources */,
 				5563B58B117DE0F4001C1C0B /* DDAtomicList.c in Sources */,
 			);

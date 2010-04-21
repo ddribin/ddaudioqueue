@@ -19,6 +19,11 @@ typedef struct DDAudioQueueListNode
 
 COMPILE_ASSERT(offsetof(DDAudioQueueListNode, buffer) == 0, invalid_node_offset);
 
+@interface DDAudioQueue ()
+- (void *)malloc:(size_t)size;
+- (void)free:(void *)bytes;
+@end
+
 @implementation DDAudioQueue
 
 - (id)initWithDelegate:(id<DDAudioQueueDelegate>)delegate;
@@ -28,7 +33,6 @@ COMPILE_ASSERT(offsetof(DDAudioQueueListNode, buffer) == 0, invalid_node_offset)
         return nil;
     
     _delegate = delegate;
-    _buffers = [[NSMutableArray alloc] init];
     _mallocData = [[NSMutableDictionary alloc] init];
     
     return self;
@@ -38,35 +42,20 @@ COMPILE_ASSERT(offsetof(DDAudioQueueListNode, buffer) == 0, invalid_node_offset)
 {
     [self removeFromRunLoop];
     [self reset];
-    [_buffers release];
     [super dealloc];
 }
 
-#if 0
 - (void)sendAvaialableBuffersToDelegate;
 {
     DDAudioQueueBuffer * buffer = NULL;
     do {
-        buffer = RAAtomicListPop(&_availableList);
-        if (buffer != NULL) {
-            buffer.length = 0;
-            [self->_delegate audioQueue:self bufferIsAvailable:buffer];
-        }
-    } while (buffer != NULL);
-}
-#else
-- (void)sendAvaialableBuffersToDelegate;
-{
-    DDAudioQueueBuffer * buffer = NULL;
-    do {
-        buffer = DDAtomicListPop(&_availableList2, NODE_OFFSET);
+        buffer = DDAtomicListPop(&_availableList, NODE_OFFSET);
         if (buffer != NULL) {
             buffer->length = 0;
             [self->_delegate audioQueue:self bufferIsAvailable:buffer];
         }
     } while (buffer != NULL);
 }
-#endif
 
 static void MyPerformCallback(void * info)
 {
@@ -100,20 +89,6 @@ static void MyPerformCallback(void * info)
     _runLoop = NULL;
 }
 
-#if 0
-- (void)popAllFromList:(RAAtomicListRef *)list
-{
-	while (RAAtomicListPop(list)) {
-    }
-}
-
-- (void)reset;
-{
-    [self popAllFromList:&_bufferList];
-    [self popAllFromList:&_renderList];
-    [self popAllFromList:&_availableList];
-}
-#else
 - (void)popAllFromList:(DDAtomicListRef *)list
 {
 	while (DDAtomicListPop(list, NODE_OFFSET)) {
@@ -122,42 +97,9 @@ static void MyPerformCallback(void * info)
 
 - (void)reset;
 {
-    [self popAllFromList:&_bufferList2];
-    [self popAllFromList:&_renderList2];
-    [self popAllFromList:&_availableList2];
-}
-#endif
-
-#if 0
-- (DDAudioQueueBuffer *)allocateBufferWithCapacity:(NSUInteger)capacity error:(NSError **)error;
-{
-    DDAudioQueueBuffer * buffer = [[(DDAudioQueueBuffer *)[DDAudioQueueBuffer alloc] initWithCapacity:capacity] autorelease];
-    [_buffers addObject:buffer];
-    
-    return buffer;
-}
-
-- (BOOL)enqueueBuffer:(DDAudioQueueBuffer *)buffer;
-{
-    NSAssert(buffer != nil, @"Buffer must not be nil");
-    RAAtomicListInsert(&_bufferList, buffer);
-    return YES;
-}
-#endif
-
-- (void *)malloc:(size_t)size
-{
-    NSMutableData * data = [NSMutableData dataWithLength:size];
-    void * bytes = [data mutableBytes];
-    NSValue * bytesValue = [NSValue valueWithPointer:bytes];
-    [_mallocData setObject:data forKey:bytesValue];
-    return bytes;
-}
-
-- (void)free:(void *)bytes
-{
-    NSValue * bytesValue = [NSValue valueWithPointer:bytes];
-    [_mallocData removeObjectForKey:bytesValue];
+    [self popAllFromList:&_bufferList];
+    [self popAllFromList:&_renderList];
+    [self popAllFromList:&_availableList];
 }
 
 - (DDAudioQueueBuffer *)allocateBufferWithCapacity:(NSUInteger)capacity error:(NSError **)error;
@@ -168,17 +110,17 @@ static void MyPerformCallback(void * info)
     // Can only assign capacity and bytes on creation because they're const.
     // Can't create and assign dynamic memory, so cheat by creating
     // a temporary one on the stack and memcpy it to our malloc'd node.
-    DDAudioQueueBuffer buffer = {
+    DDAudioQueueBuffer tempBuffer = {
         .capacity = capacity,
         .length = 0,
         .bytes = bufferBytes,
     };
-    memcpy(&node->buffer, &buffer, sizeof(buffer));
+    memcpy(&node->buffer, &tempBuffer, sizeof(node->buffer));
     
-    DDAudioQueueBuffer * buffer2 = &node->buffer;
-    NSAssert(node == (void *)buffer2, @"Invalid node layout");
+    DDAudioQueueBuffer * buffer = &node->buffer;
+    NSAssert(node == (void *)buffer, @"Invalid node layout");
     
-    return buffer2;
+    return buffer;
 }
 
 - (void)deallocateBuffer:(DDAudioQueueBuffer *)buffer;
@@ -191,46 +133,41 @@ static void MyPerformCallback(void * info)
 {
     NSAssert(buffer != nil, @"Buffer must not be nil");
     DDAudioQueueListNode * node = (DDAudioQueueListNode *)buffer;
-    DDAtomicListInsert(&_bufferList2, node, NODE_OFFSET);
+    DDAtomicListInsert(&_bufferList, node, NODE_OFFSET);
     return YES;
 }
 
-#if 0
 DDAudioQueueBuffer * DDAudioQueueDequeueBuffer(DDAudioQueue * queue)
 {
-    DDAudioQueueBuffer * buffer = (id)RAAtomicListPop(&queue->_renderList);
+    DDAudioQueueBuffer * buffer = DDAtomicListPop(&queue->_renderList, NODE_OFFSET);
     if (buffer == nil) {
-        queue->_renderList = RAAtomicListSteal(&queue->_bufferList);
-        RAAtomicListReverse(&queue->_renderList);
-        buffer = (id)RAAtomicListPop(&queue->_renderList);
+        queue->_renderList = DDAtomicListSteal(&queue->_bufferList);
+        DDAtomicListReverse(&queue->_renderList, NODE_OFFSET);
+        buffer = DDAtomicListPop(&queue->_renderList, NODE_OFFSET);
     }
     return buffer;
 }
 
 void DDAudioQueueMakeBufferAvailable(DDAudioQueue * queue, DDAudioQueueBuffer * buffer)
 {
-    RAAtomicListInsert(&queue->_availableList, buffer);
+    DDAtomicListInsert(&queue->_availableList, buffer, NODE_OFFSET);
     CFRunLoopSourceSignal(queue->_runLoopSource);
     CFRunLoopWakeUp(queue->_runLoop);
-}
-#else
-DDAudioQueueBuffer * DDAudioQueueDequeueBuffer(DDAudioQueue * queue)
-{
-    DDAudioQueueBuffer * buffer = DDAtomicListPop(&queue->_renderList2, NODE_OFFSET);
-    if (buffer == nil) {
-        queue->_renderList2 = DDAtomicListSteal(&queue->_bufferList2);
-        DDAtomicListReverse(&queue->_renderList2, NODE_OFFSET);
-        buffer = DDAtomicListPop(&queue->_renderList2, NODE_OFFSET);
-    }
-    return buffer;
 }
 
-void DDAudioQueueMakeBufferAvailable(DDAudioQueue * queue, DDAudioQueueBuffer * buffer)
+- (void *)malloc:(size_t)size;
 {
-    DDAtomicListInsert(&queue->_availableList2, buffer, NODE_OFFSET);
-    CFRunLoopSourceSignal(queue->_runLoopSource);
-    CFRunLoopWakeUp(queue->_runLoop);
+    NSMutableData * data = [NSMutableData dataWithLength:size];
+    void * bytes = [data mutableBytes];
+    NSValue * bytesValue = [NSValue valueWithPointer:bytes];
+    [_mallocData setObject:data forKey:bytesValue];
+    return bytes;
 }
-#endif
+
+- (void)free:(void *)bytes;
+{
+    NSValue * bytesValue = [NSValue valueWithPointer:bytes];
+    [_mallocData removeObjectForKey:bytesValue];
+}
 
 @end

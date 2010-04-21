@@ -37,8 +37,8 @@
 
 static void processBuffer(DDAudioQueueBuffer * buffer, DDAudioQueue * queue)
 {
-    const void * bytes = DDAudioQueueBufferGetBytes(buffer);
-    NSUInteger length = DDAudioQueueBufferGetLength(buffer);
+    const void * bytes = buffer->bytes;
+    NSUInteger length = buffer->length;
     NSLog(@"Processing %u data at %p <0x%08X>", length, bytes, *(uint32_t*)bytes);
 }
 
