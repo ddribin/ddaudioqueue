@@ -246,4 +246,13 @@ static const NSUInteger CAPACITY = 10;
     STAssertEquals([self availableBuffer:1], DDAudioQueueFenceBuffer, nil);
 }
 
+- (void)testEnqueueFenceBufferSetsLenghtToZero
+{
+    DDAudioQueueFenceBuffer->length = 10;
+    
+    [_queue enqueueFenceBuffer];
+    
+    STAssertEquals(DDAudioQueueFenceBuffer->length, (NSUInteger)0, nil);
+}
+
 @end

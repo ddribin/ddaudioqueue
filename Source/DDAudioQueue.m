@@ -4,6 +4,11 @@
 #import "DDAudioQueueDelegate.h"
 #import "DDAudioQueueBuffer.h"
 
+/*
+ * Play a little trick here. By putting the buffer as the first element in the
+ * structure, assume we can just cast a pointer to a buffer and node and
+ * vice versa.  If padding somehow got in front of buffer, this wouldn't work.
+ */
 typedef struct DDAudioQueueListNode
 {
     DDAudioQueueBuffer buffer;
@@ -170,6 +175,7 @@ static void MyPerformCallback(void * info)
 
 - (void)enqueueFenceBuffer;
 {
+    DDAudioQueueFenceBuffer->length = 0;
     [self enqueueBuffer:DDAudioQueueFenceBuffer];
 }
 
