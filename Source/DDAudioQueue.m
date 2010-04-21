@@ -68,7 +68,6 @@ DDAudioQueueBuffer * DDAudioQueueFenceBuffer = &sFenceNode.buffer;
         return;
     }
 
-    NSLog(@"buffer: %p, fence: %p", buffer, DDAudioQueueFenceBuffer);
     buffer->length = 0;
     if (buffer == DDAudioQueueFenceBuffer) {
         if ([_delegate respondsToSelector:@selector(audioQueueDidReceiveFence:)]) {
