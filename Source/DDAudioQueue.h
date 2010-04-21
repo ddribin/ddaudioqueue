@@ -15,10 +15,7 @@
     RAAtomicListRef _bufferList;
     RAAtomicListRef _renderList;
     RAAtomicListRef _availableList;
-    NSMutableArray * _nodes;
-    NSMutableDictionary * _nodeDataByByteAddress;
     NSMutableDictionary * _mallocData;
-    NSMutableArray * _buffers2;
     DDAtomicListRef _bufferList2;
     DDAtomicListRef _renderList2;
     DDAtomicListRef _availableList2;
@@ -35,6 +32,8 @@
 - (void)reset;
 
 - (DDAudioQueueBuffer *)allocateBufferWithCapacity:(NSUInteger)capacity error:(NSError **)error;
+
+- (void)deallocateBuffer:(DDAudioQueueBuffer *)buffer;
 
 - (BOOL)enqueueBuffer:(DDAudioQueueBuffer *)buffer;
 

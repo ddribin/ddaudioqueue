@@ -29,6 +29,7 @@ COMPILE_ASSERT(offsetof(DDAudioQueueListNode, buffer) == 0, invalid_node_offset)
     
     _delegate = delegate;
     _buffers = [[NSMutableArray alloc] init];
+    _mallocData = [[NSMutableDictionary alloc] init];
     
     return self;
 }

@@ -85,6 +85,12 @@ static const NSUInteger CAPACITY = 10;
     STAssertNotNil(buffer->bytes, nil);
 }
 
+- (void)testCanDeallocateBuffer
+{
+    DDAudioQueueBuffer * buffer = [self allocateBuffer];
+    [_queue deallocateBuffer:buffer];
+}
+
 - (void)testDequeuesBuffersInOrderTheyAreEnqeueued
 {
     [self allocateBuffers:2];
