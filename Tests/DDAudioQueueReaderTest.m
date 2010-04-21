@@ -55,7 +55,6 @@ static const NSUInteger READ_BUFFER_SIZE = 50;
 - (void)audioQueue:(DDAudioQueue *)queue bufferIsAvailable:(DDAudioQueueBuffer *)buffer;
 {
     STAssertEquals(_queue, queue, nil);
-    NSLog(@"bufferIsAvailable: %p", buffer);
     [_availableBuffers addObject:[NSValue valueWithPointer:buffer]];
 }
 
@@ -192,18 +191,71 @@ static const NSUInteger READ_BUFFER_SIZE = 50;
     STAssertEquals([self availableBuffer:0], [self buffer:0], nil);
 }
 
-- (void)testMakesBothBuffersAavailableAfterMultiBufferRead
+- (void)testMakesAllBuffersAavailableAfterMultiBufferRead
 {
     [self enqueueBuffer:0 withValue:0x01 length:10];
     [self enqueueBuffer:1 withValue:0x02 length:10];
+    [self enqueueBuffer:2 withValue:0x03 length:10];
     
-    [self readBytes:20];
+    [self readBytes:30];
     [self spinRunLoop];
     
+    STAssertEquals([_availableBuffers count], (NSUInteger)3, nil);
+    // They become available in reverse order
+    STAssertEquals([self availableBuffer:0], [self buffer:2], nil);
+    STAssertEquals([self availableBuffer:1], [self buffer:1], nil);
+    STAssertEquals([self availableBuffer:2], [self buffer:0], nil);
+}
+
+- (void)testReadingMoreBytesThanEqueued
+{
+    [self enqueueBuffer:0 withValue:0x01 length:10];
+    [self enqueueBuffer:1 withValue:0x02 length:10];
+    [self enqueueBuffer:2 withValue:0x03 length:10];
+    
+    [self readBytes:40];
+    [self spinRunLoop];
+    
+    STAssertEquals([_availableBuffers count], (NSUInteger)3, nil);
+    // They become available in reverse order
+    STAssertEquals([self availableBuffer:0], [self buffer:2], nil);
+    STAssertEquals([self availableBuffer:1], [self buffer:1], nil);
+    STAssertEquals([self availableBuffer:2], [self buffer:0], nil);
+}
+
+- (void)testStopsReadingAtFence
+{
+    [self enqueueBuffer:0 withValue:0x01 length:10];
+    [self enqueueBuffer:1 withValue:0x02 length:10];
+    [_queue enqueueFenceBuffer];
+    [self enqueueBuffer:2 withValue:0x03 length:10];
+    
+    UInt32 bytesRead = [self readBytes:READ_BUFFER_SIZE];
+    [self spinRunLoop];
+    
+    STAssertEquals(bytesRead, (UInt32)20, nil);
     STAssertEquals([_availableBuffers count], (NSUInteger)2, nil);
     // They become available in reverse order
     STAssertEquals([self availableBuffer:0], [self buffer:1], nil);
     STAssertEquals([self availableBuffer:1], [self buffer:0], nil);
+}
+
+- (void)testContinuesReadingAtFence
+{
+    [self enqueueBuffer:0 withValue:0x01 length:10];
+    [self enqueueBuffer:1 withValue:0x02 length:10];
+    [_queue enqueueFenceBuffer];
+    [self enqueueBuffer:2 withValue:0x03 length:10];
+    [self readBytes:READ_BUFFER_SIZE];
+    [self spinRunLoop];
+    [_availableBuffers removeAllObjects];
+    
+    UInt32 bytesRead = [self readBytes:READ_BUFFER_SIZE];
+    [self spinRunLoop];
+    
+    STAssertEquals(bytesRead, (UInt32)10, nil);
+    STAssertEquals([_availableBuffers count], (NSUInteger)1, nil);
+    STAssertEquals([self availableBuffer:0], [self buffer:2], nil);
 }
 
 @end

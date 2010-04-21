@@ -11,6 +11,7 @@
     DDAudioQueue * _queue;
     NSMutableArray * _buffers;
     NSMutableArray * _availableBuffers;
+    int _fenceCount;
 }
 
 @end

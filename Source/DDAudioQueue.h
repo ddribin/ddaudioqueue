@@ -32,8 +32,12 @@
 
 - (BOOL)enqueueBuffer:(DDAudioQueueBuffer *)buffer;
 
+- (void)enqueueFenceBuffer;
+
 @end
 
 DDAudioQueueBuffer * DDAudioQueueDequeueBuffer(DDAudioQueue * queue);
 
 void DDAudioQueueMakeBufferAvailable(DDAudioQueue * queue, DDAudioQueueBuffer * buffer);
+
+DDAudioQueueBuffer * DDAudioQueueFenceBuffer;

@@ -18,6 +18,11 @@ static const NSUInteger CAPACITY = 10;
     [_availableBuffers addObject:[NSValue valueWithPointer:buffer]];
 }
 
+- (void)audioQueueDidReceiveFence:(DDAudioQueue *)queue;
+{
+    _fenceCount++;
+}
+
 - (DDAudioQueueBuffer *)availableBuffer:(NSUInteger)index
 {
     NSValue * value = [_availableBuffers objectAtIndex:index];
@@ -64,6 +69,7 @@ static const NSUInteger CAPACITY = 10;
     [_queue scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     _buffers = [NSMutableArray array];
     _availableBuffers = [NSMutableArray array];
+    _fenceCount = 0;
 }
 
 - (void)tearDown
@@ -182,6 +188,43 @@ static const NSUInteger CAPACITY = 10;
     STAssertEquals(DDAudioQueueDequeueBuffer(_queue), [self buffer:3], nil);
     STAssertEquals(DDAudioQueueDequeueBuffer(_queue), [self buffer:4], nil);
     STAssertNull(DDAudioQueueDequeueBuffer(_queue), nil);
+}
+
+#pragma mark -
+
+- (void)testDoesNotCallFenceDelegateIfNoFenceIsEnqueued
+{
+    [self allocateBuffers:1];
+    [_queue enqueueBuffer:[self buffer:0]];
+    [self dequeueAndMakeAvailable];
+    
+    [self spinRunLoop];
+    
+    STAssertEquals(_fenceCount, 0, nil);
+}
+
+- (void)testCallsFenceDelegateAfterEnqueuingAndProcessingFence
+{
+    [_queue enqueueFenceBuffer];
+    [self dequeueAndMakeAvailable];
+    
+    [self spinRunLoop];
+    
+    STAssertEquals(_fenceCount, 1, nil);
+}
+
+- (void)testCallsFenceDelegateAfterDequeingAllBuffers
+{
+    [self allocateBuffers:1];
+    [_queue enqueueBuffer:[self buffer:0]];
+    [self dequeueAndMakeAvailable];
+
+    [_queue enqueueFenceBuffer];
+    [self dequeueAndMakeAvailable];
+    
+    [self spinRunLoop];
+    
+    STAssertEquals(_fenceCount, 1, nil);
 }
 
 @end

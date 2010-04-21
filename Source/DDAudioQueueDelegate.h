@@ -10,4 +10,8 @@
 
 - (void)audioQueue:(DDAudioQueue *)queue bufferIsAvailable:(DDAudioQueueBuffer *)buffer;
 
+@optional
+
+- (void)audioQueueDidReceiveFence:(DDAudioQueue *)queue;
+
 @end
