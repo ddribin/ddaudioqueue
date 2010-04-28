@@ -1,6 +1,6 @@
 //
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 #import "DDAudioQueueBuffer.h"
 
 @class DDAudioQueue;
